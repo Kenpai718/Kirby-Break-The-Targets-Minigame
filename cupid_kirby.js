@@ -276,10 +276,9 @@ class CupidKirby {
 		this.updateBB();
 
 
-		//reset position if outside the canvas. Temporary solution!
-		//reset loop
-		if (this.x > this.game.surfaceWidth || this.x < 0) {
-			this.x = 0;
+		//border that prevents kirby from walking outside the canvas
+		if (this.x > this.game.surfaceWidth - this.width|| this.x < 0) {
+			this.x = this.x < 0 ? 0: this.game.surfaceWidth - this.width;
 			this.y = this.y;
 		}
 

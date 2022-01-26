@@ -5,7 +5,8 @@ class SceneManager {
         
         //game status
         this.title = false;
-        this.gameOver = false;
+        this.numTargets = 10;
+        this.cleared = 0;
 
         //testing goblin animations
         //this.test = new Skeleton(this.game, 400, 927)
@@ -40,10 +41,7 @@ class SceneManager {
         let bg = new Background(this.game);
         let ground = new Ground(this.game, 0, this.game.surfaceHeight - PARAMS.BLOCKWIDTH + 10, this.game.surfaceWidth, PARAMS.BLOCKWIDTH, true);
 
-        for(let i = 0; i < 10; i++) {
-             let target = new Target(this.game);
-             this.game.addEntity(target);
-        }
+        this.spawnTargets(this.numTargets);
        
 
         //add entities
@@ -51,6 +49,13 @@ class SceneManager {
 
         //background always last
         this.game.addEntity(bg);
+    }
+
+    spawnTargets(num) {
+        for(let i = 0; i < num; i++) {
+            let target = new Target(this.game);
+            this.game.addEntity(target);
+       }
     }
 
 
