@@ -113,6 +113,14 @@ class AssetManager {
 
     autoRepeat(path) {
         var aud = this.cache[path];
+        
+        //force music play without a click
+        const autoPlayID = setInterval(() => {
+            aud.play()
+                .then(() => clearInterval(autoPlayID))
+                .catch(console.error);
+        }, 500);
+
         aud.addEventListener("ended", function () {
             aud.play();
         });

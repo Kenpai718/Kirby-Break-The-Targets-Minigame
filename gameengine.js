@@ -135,15 +135,6 @@ class GameEngine {
                 case "KeyS":
                     that.down = false;
                     break;
-                case "Space":
-                    that.jump = false;
-                    break;
-                case "KeyP":
-                    that.attack = false;
-                    break;
-                case "ShiftLeft":
-                    that.dash = false;
-                    break;
             }
         }, false);
 
@@ -196,6 +187,8 @@ class GameEngine {
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
+
+        this.camera.draw(this.ctx);
     };
 
     update() {
@@ -208,6 +201,8 @@ class GameEngine {
         // Add new things
         this.entities = this.entities.concat(this.entitiesToAdd);
         this.entitiesToAdd = [];
+
+        this.camera.update();
     };
 
     loop() {
