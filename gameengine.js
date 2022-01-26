@@ -24,8 +24,8 @@ class GameEngine {
         this.attack = null;
         this.roll = null;
 
-        //counter for an attack chain corresponding to attack presses
-        this.comboCounter = 0;
+        this.numHit = 0;
+        this.numFired = 0;
 
         // this.keys = {};
 
@@ -95,7 +95,7 @@ class GameEngine {
                 case 1:
                     //alert('Left Mouse button pressed.');
                     that.attack = true;
-                    that.comboCounter += 1;
+                    that.numFired++;
                     break;
                 case 2:
                     //alert('Middle Mouse button pressed.');
@@ -168,7 +168,6 @@ class GameEngine {
                     break;
                 case "w":
                     that.up = true;
-                    that.jump = true;
                     break;
                 case "p":
                     that.attack = true;
@@ -214,6 +213,11 @@ class GameEngine {
     addEntity(entity) {
         this.entities.push(entity);
     };
+
+    addEntityToFront(entity) {
+        this.entities.unshift(entity);
+    };
+
 
     draw() {
         // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))

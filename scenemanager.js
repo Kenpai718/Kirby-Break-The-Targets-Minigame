@@ -39,6 +39,11 @@ class SceneManager {
         //ground
         let bg = new Background(this.game);
         let ground = new Ground(this.game, 0, this.game.surfaceHeight - PARAMS.BLOCKWIDTH + 10, this.game.surfaceWidth, PARAMS.BLOCKWIDTH, true);
+
+        for(let i = 0; i < 10; i++) {
+             let target = new Target(this.game);
+             this.game.addEntity(target);
+        }
        
 
         //add entities
@@ -100,5 +105,6 @@ class SceneManager {
         ctx.fillStyle = ctx.strokeStyle;
         ctx.strokeRect(190, this.game.surfaceHeight -40, 30, 30);
         ctx.fillText("ATK", 195, this.game.surfaceHeight - 20);
+        
 	}
 }

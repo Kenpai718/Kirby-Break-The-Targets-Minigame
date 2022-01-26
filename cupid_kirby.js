@@ -88,22 +88,22 @@ class CupidKirby {
 		this.animations[1][this.states.run] = new Animator(this.spritesheet, 4.5, 108, 25.5, 22, 8, 0.1, 0.17, false, true, false);
 
 		//jump
-		this.animations[0][this.states.jump] = new Animator(this.spritesheet, 0, 32, 29.5, 26, 8, 0.1, 0, false, false, true);
-		this.animations[1][this.states.jump] = new Animator(this.spritesheet, 0, 32, 29.5, 26, 8, 0.1, 0, false, false, false);
+		this.animations[0][this.states.jump] = new Animator(this.spritesheet, 0, 32, 29.5, 26, 8, 0.1, 0, false, true, true);
+		this.animations[1][this.states.jump] = new Animator(this.spritesheet, 0, 32, 29.5, 26, 8, 0.1, 0, false, true, false);
 
 		//falling
 		this.animations[0][this.states.falling] = new Animator(this.spritesheet, 209, 29, 29, 27, 6, 0.1, 0, false, true, true);
 		this.animations[1][this.states.falling] = new Animator(this.spritesheet, 209, 29, 29, 27, 6, 0.1, 0, false, true, false);
 
 		//ground shoot
-		this.animations[0][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, 0.1, 2, false, false, true);
-		this.animations[1][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, 0.1, 2, false, false, false);
+		this.animations[0][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, 0.05, 2, false, false, true);
+		this.animations[1][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, 0.05, 2, false, false, false);
 
 		//air shoot
-		this.animations[0][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, 0.1, 0, false, false, true);
-		this.animations[1][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, 0.1, 0, false, false, false);
+		this.animations[0][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, 0.05, 0, false, false, true);
+		this.animations[1][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, 0.05, 0, false, false, false);
 
-		//air shoot
+		//fly
 		this.animations[0][this.states.flying] = new Animator(this.spritesheet, 0, 61, 30, 29, 9, 0.1, 0, false, true, true);
 		this.animations[1][this.states.flying] = new Animator(this.spritesheet, 0, 61, 30, 29, 9, 0.1, 0, false, true, false);
 
@@ -181,16 +181,16 @@ class CupidKirby {
 			}
 
 			if (this.action == this.states.jump) {
-				console.log("here");
-				if (this.animations[this.facing][this.states.jump].isDone()) { //jump finished transition to falling
+				if (this.animations[0][this.states.jump].isDone() || this.animations[1][this.states.jump].isDone()) { //jump finished transition to falling
 					this.action = this.states.falling;
-					this.resetAnimationTimers(this.states.jump);
-					console.log("transition jump here");
+					//console.log("transition jump here");
 				}
+			} else {
+				this.resetAnimationTimers(this.states.jump);
 			}
 
-			if (this.game.jump && !this.flightMode) {
-				console.log("flight mode on");
+			if (this.game.jump && this.inAir && !this.flightMode) {
+				//console.log("flight mode on");
 				this.flightMode = true;
 				this.game.jump = false;
 				this.action = this.states.flying;
@@ -216,11 +216,12 @@ class CupidKirby {
 					this.velocity.y += MAX_RUN;
 				}
 
-			} else if(this.flightMode && this.game.jump) {
+			} else if(this.flightMode && this.game.jump && this.inAir) {
 				this.action = this.states.falling;
 				this.flightMode = false;
 				this.velocity.y += WALK_FALL;
-				console.log("flight mode off falling");
+				this.game.jump = false;
+				//console.log("flight mode off falling");
 			}
 
 
@@ -243,6 +244,9 @@ class CupidKirby {
 			if (done) {
 				this.action = this.DEFAULT_ACTION;
 				this.game.attack = false; //stop attackin
+
+				//spawn the arrow
+				this.game.addEntityToFront(new Arrow(this.game, this.x + this.width, this.y + this.height / 2, this.game.mouse));
 			}
 
 		} else {
@@ -274,9 +278,9 @@ class CupidKirby {
 
 		//reset position if outside the canvas. Temporary solution!
 		//reset loop
-		if (this.x > 1024 || this.x < 0) {
+		if (this.x > this.game.surfaceWidth || this.x < 0) {
 			this.x = 0;
-			this.y = this.groundLevel;
+			this.y = this.y;
 		}
 
 		//do collisions detection here
@@ -296,8 +300,9 @@ class CupidKirby {
 						//touched ground so reset all jumping properties
 						that.inAir = false;
 						that.flyingMode = false;
-						if (that.action == that.states.jump || that.action == that.states.falling) {
+						if (that.action == that.states.jump || that.action == that.states.falling || that.action == that.states.flying) {
 							that.action = that.DEFAULT_ACTION// set state to idle
+							that.game.jump = false;
 						}
 
 
