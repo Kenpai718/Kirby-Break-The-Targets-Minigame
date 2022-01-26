@@ -12,7 +12,7 @@ class SceneManager {
         //this.game.addEntity(this.test);
 
         //main character
-        this.player = new Kirby(this.game, 0, 300);
+        this.player = new CupidKirby(this.game, 0, 300);
         this.game.addEntity(this.player);
 
         //this.loadLevel1();

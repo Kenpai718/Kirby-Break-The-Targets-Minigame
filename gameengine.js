@@ -1,6 +1,7 @@
 // This game shell was happily modified from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
 class GameEngine {
+    
     constructor(options) {
         // What you will use to draw
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
@@ -8,28 +9,30 @@ class GameEngine {
 
         // Everything that will be updated and drawn each frame
         this.entities = [];
-        // Entities to be added at the end of each update
-        this.entitiesToAdd = [];
-
-        //height for debug
-        this.surfaceWidth = null;
-        this.surfaceHeight = null;
 
         // Information on the input
         this.click = null;
         this.mouse = null;
         this.wheel = null;
-        //this.keys = {};
 
-        //game movement
-        this.left = false;
-        this.right = false;
-        this.up = false;
-        this.down = false;
-        this.dash = false;
-        this.jump = false;
-        this.attack = false;
+        //controls
+        this.left = null;
+        this.right = null;
+        this.down = null;
+        this.up = null;
+        this.jump = null;
+        this.attack = null;
+        this.roll = null;
 
+        //counter for an attack chain corresponding to attack presses
+        this.comboCounter = 0;
+
+        // this.keys = {};
+
+
+        //height for debug
+        this.surfaceWidth = null;
+        this.surfaceHeight = null;
 
         // THE KILL SWITCH
         this.running = false;
@@ -48,6 +51,7 @@ class GameEngine {
         this.ctx = ctx;
         this.surfaceWidth = this.ctx.canvas.width;
         this.surfaceHeight = this.ctx.canvas.height;
+
         this.startInput();
         this.timer = new Timer();
     };
@@ -63,82 +67,12 @@ class GameEngine {
         gameLoop();
     };
 
-    
-
     startInput() {
-
         var that = this;
-
-        const getXandY = function (e) {
-            var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
-            var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
-
-            return { x: x, y: y, radius: 0 };
-        }
-
-        this.ctx.canvas.addEventListener("mousemove", function (e) {
-            that.mouse = getXandY(e);
-        }, false);
-
-        this.ctx.canvas.addEventListener("click", function (e) {
-            that.click = getXandY(e);
-        }, false);
-
-        this.ctx.canvas.addEventListener("keydown", function (e) {
-            //console.log(e);
-            switch (e.code) {
-                case "ArrowLeft":
-                case "KeyA":
-                    that.left = true;
-                    break;
-                case "ArrowRight":
-                case "KeyD":
-                    that.right = true;
-                    break;
-                case "ArrowUp":
-                case "KeyW":
-                    that.up = true;
-                    break;
-                case "ArrowDown":
-                case "KeyS":
-                    that.down = true;
-                    break;
-                
-                case "Space":
-                    that.jump = true;
-                    break;
-                
-                case "KeyP":
-                    that.attack = true;
-                    break;
-                case "ShiftLeft":
-                    that.dash = true;
-                    break;
-            }
-        }, false);
-
-        this.ctx.canvas.addEventListener("keyup", function (e) {
-            switch (e.code) {
-                case "ArrowLeft":
-                case "KeyA":
-                    that.left = false;
-                    break;
-                case "ArrowRight":
-                case "KeyD":
-                    that.right = false;
-                    break;
-                case "ArrowUp":
-                case "KeyW":
-                    that.up = false;
-                    break;
-                case "ArrowDown":
-                case "KeyS":
-                    that.down = false;
-                    break;
-            }
-        }, false);
-
-        //other
+        const getXandY = e => ({
+            x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
+            y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
+        });
 
         this.ctx.canvas.addEventListener("mousemove", e => {
             if (this.options.debugging) {
@@ -147,11 +81,56 @@ class GameEngine {
             this.mouse = getXandY(e);
         });
 
+
+        //mouse was clicked
         this.ctx.canvas.addEventListener("click", e => {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
+            
             this.click = getXandY(e);
+            
+            //set attack
+            switch (e.which) {
+                case 1:
+                    //alert('Left Mouse button pressed.');
+                    that.attack = true;
+                    that.comboCounter += 1;
+                    break;
+                case 2:
+                    //alert('Middle Mouse button pressed.');
+                    break;
+                case 3:
+                    //alert('Right Mouse button pressed.');
+                    break;
+
+            }
+
+        
+        });
+
+        //release mouse click
+        this.ctx.canvas.addEventListener("mouseup", e => {
+            if (this.options.debugging) {
+                console.log("CLICK", getXandY(e));
+            }
+            
+            this.click = getXandY(e);
+            
+            switch (e.which) {
+                case 1:
+                    //alert('Left Mouse button release.');
+                    break;
+                case 2:
+                    //alert('Middle Mouse button release.');
+                    break;
+                case 3:
+                    //alert('Right Mouse button release.');
+                    break;
+
+            }
+
+        
         });
 
         this.ctx.canvas.addEventListener("wheel", e => {
@@ -173,10 +152,67 @@ class GameEngine {
             }
             this.rightclick = getXandY(e);
         });
+
+        //keyboard press control logic
+        this.ctx.canvas.addEventListener("keydown", function (e) {
+            e.preventDefault(); //prevent scrolling from pressing a key
+            switch (e.key) {
+                case "d":
+                    that.right = true;
+                    break;
+                case "a":
+                    that.left = true;
+                    break;
+                case "s":
+                    that.down = true;
+                    break;
+                case "w":
+                    that.up = true;
+                    that.jump = true;
+                    break;
+                case "p":
+                    that.attack = true;
+                    break;
+                case "Shift":
+                    that.roll = true;
+                    break;
+                case " ":
+                    that.jump = true;
+                    break;
+            }
+        }, false);
+
+        //keyboard release control logic
+        this.ctx.canvas.addEventListener("keyup", function (e) {
+            switch (e.key) {
+                case "d":
+                    that.right = false;
+                    break;
+                case "a":
+                    that.left = false;
+                    break;
+                case "s":
+                    that.down = false;
+                    break;
+                case "w":
+                    that.up = false;
+                    break;
+                case "p":
+                    //hacky solution to a combo system
+                    //combo counter only incremented when the key is released
+                    //reset this counter from player entity
+                    that.comboCounter += 1;
+                    //console.log(that.comboCounter);
+                    break;
+            }
+        }, false);
+
+        // window.addEventListener("keydown", event => this.keys[event.key] = true);
+        // window.addEventListener("keyup", event => this.keys[event.key] = false);
     };
 
     addEntity(entity) {
-        this.entitiesToAdd.push(entity);
+        this.entities.push(entity);
     };
 
     draw() {
@@ -188,20 +224,29 @@ class GameEngine {
             this.entities[i].draw(this.ctx, this);
         }
 
+
+        //update the camera (scene manager)
         this.camera.draw(this.ctx);
     };
 
     update() {
-        // Update Entities
-        this.entities.forEach(entity => entity.update(this));
+        let entitiesCount = this.entities.length;
 
-        // Remove dead things
-        this.entities = this.entities.filter(entity => !entity.removeFromWorld);
+        for (let i = 0; i < entitiesCount; i++) {
+            let entity = this.entities[i];
 
-        // Add new things
-        this.entities = this.entities.concat(this.entitiesToAdd);
-        this.entitiesToAdd = [];
+            if (!entity.removeFromWorld) {
+                entity.update();
+            }
+        }
 
+        for (let i = this.entities.length - 1; i >= 0; --i) {
+            if (this.entities[i].removeFromWorld) {
+                this.entities.splice(i, 1);
+            }
+        }
+
+        //update the camera (scene manager)
         this.camera.update();
     };
 
@@ -211,9 +256,6 @@ class GameEngine {
         this.draw();
     };
 
-    get["deltaTime"]() { return this.clockTick; }
-    get["width"]() { return this.ctx?.canvas?.width || 0; }
-    get["height"]() { return this.ctx?.canvas?.height || 0; }
 };
 
 // KV Le was here :)

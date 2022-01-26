@@ -155,7 +155,7 @@ class Kirby {
 
 			//jump press
 			if (this.game.jump && !this.action.jump) {
-				this.action = this.states.jump; //jump (9-11)
+				this.action = this.states.falling; //jump (9-11)
 				//set jump distance
 				this.velocity.y -= JUMP_HEIGHT;
 				this.game.jump = false;
