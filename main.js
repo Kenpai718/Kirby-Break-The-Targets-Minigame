@@ -35,6 +35,7 @@ ASSET_MANAGER.downloadAll(() => {
 	ASSET_MANAGER.autoRepeat("./music/break_the_targets_melee.mp3");
 
 	//force play music to bypass browser policy
+	//should make a title screen instead later
 	const autoPlayID = setInterval(() => {
         audio.play()
             .then(() => clearInterval(autoPlayID))
