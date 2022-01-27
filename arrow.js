@@ -1,7 +1,7 @@
 class Arrow {
     constructor(game, x, y, target, towerTeam, heatSeeking) {
         Object.assign(this, { game, x, y, target});
-        this.radius = 12;
+        this.radius = 15;
         this.smooth = false;
 
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/arrow.png");
@@ -14,13 +14,14 @@ class Arrow {
         this.cache = [];
 
         this.animations = [];
-        this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true));
-        this.animations.push(new Animator(this.spritesheet, 40, 0, 32, 32, 1, 0.2, 0, false, true));
-        this.animations.push(new Animator(this.spritesheet, 80, 0, 32, 32, 1, 0.2, 0, false, true));
-        this.animations.push(new Animator(this.spritesheet, 120, 0, 32, 32, 1, 0.2, 0, false, true));
-        this.animations.push(new Animator(this.spritesheet, 160, 0, 32, 32, 1, 0.2, 0, false, true));
+        this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
+        this.animations.push(new Animator(this.spritesheet, 40, 0, 32, 32, 1, 0.2, 0, false, true)); //up right
+        this.animations.push(new Animator(this.spritesheet, 80, 0, 32, 32, 1, 0.2, 0, false, true)); //right
+        this.animations.push(new Animator(this.spritesheet, 120, 0, 32, 32, 1, 0.2, 0, false, true)); //down right
+        this.animations.push(new Animator(this.spritesheet, 160, 0, 32, 32, 1, 0.2, 0, false, true)); //down
 
         this.facing = 5;
+        this.scale = 3;
         
         this.elapsedTime = 0;
     };
@@ -66,9 +67,15 @@ class Arrow {
         for (var i = 0; i < this.game.entities.length; i++) {
             var ent = this.game.entities[i];
             if (ent instanceof Target && collide(this, ent)) {
-                ent.hit = true;
-                this.game.numHit++;
+                if(!ent.hit) {
+                    this.game.numHit++;
+                    ent.hit = true;
+                    ent.removeFromWorld = true;
+
+                    //play hit sound
+                    ASSET_MANAGER.playAsset("./sound/hitsound.wav");
                 //console.log("hit");
+                }
             }
         }
 
@@ -76,8 +83,8 @@ class Arrow {
     };
 
     draw(ctx) {
-        var xOffset = 16;
-        var yOffset = 16;
+        var xOffset = 16 * this.scale;
+        var yOffset = 16 * this.scale;
         if (this.smooth) {
             let angle = Math.atan2(this.velocity.y , this.velocity.x);
             if (angle < 0) angle += Math.PI * 2;
@@ -86,11 +93,11 @@ class Arrow {
             this.drawAngle(ctx, degrees);
         } else {
             if (this.facing < 5) {
-                this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.x - xOffset, this.y - yOffset, 1);
+                this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.x - xOffset, this.y - yOffset, this.scale);
             } else {
                 ctx.save();
                 ctx.scale(-1, 1);
-                this.animations[8 - this.facing].drawFrame(this.game.clockTick, ctx, -(this.x) - 32 + xOffset, this.y - yOffset, 1);
+                this.animations[8 - this.facing].drawFrame(this.game.clockTick, ctx, -(this.x) - (32 * this.scale) + xOffset, this.y - yOffset, this.scale);
                 ctx.restore();
             }
         }

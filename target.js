@@ -5,7 +5,7 @@ class Target {
 		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/targets.png");
 
 		//variables to adjust position and movement speed
-		this.speed = 100;
+		//in range is (max - min) *min
 		this.x = Math.floor(Math.random() * this.game.surfaceWidth);
 		this.y = Math.floor(Math.random() * this.game.surfaceHeight);
 
@@ -15,9 +15,7 @@ class Target {
 
 
 		this.velocity = { x: 0, y: 0 };
-		this.speed = 10;
-
-		this.behavior = Math.floor(Math.random() * 4); //0 = left, 1 = right, 2 = up, 3 = down
+		this.setDirAndSpeed(); //set initial direction and speed
 		this.color = Math.floor(Math.random() * 5);
 
 		this.animations = [];
@@ -29,54 +27,73 @@ class Target {
 
 	};
 
+	setDirAndSpeed() {
+		this.behavior = Math.floor(Math.random() * 4); //0 = left, 1 = right, 2 = up, 3 = down
+		this.speed = Math.floor(Math.random() * (10 - 1) + 1); //in range is (max - min) *min
+		switch (this.behavior) {
+			case (0):
+				this.velocity.x = -this.speed;
+				break;
+			case (1):
+				this.velocity.x = this.speed;
+				break;
+			case (2):
+				this.velocity.y = -this.speed;
+				break;
+			case (3):
+				this.velocity.y = -this.speed;
+				break;
+		}
+
+	}
+
 	update() {
 
 		const TICK = this.game.clockTick;
 		const MAX_SPD = 300;
-		let bounce = 50;
 
-
-		if (this.x < 0 || this.x > this.game.surfaceWidth || this.y < 0 || this.y > this.game.surfaceHeight) {
-			if (this.behavior == 0) { //left out
-				this.x += bounce;
-				this.behavior = 1;
-			} else if (this.behavior == 1) { //right
-				this.x -= bounce;
-				this.behavior = 0;
-			} else if (this.behavior == 2) { //up
-				this.y += bounce;
-				this.behavior = 3;
-			} else { //down
-				this.y -= bounce;
-				this.behavior = 2;
-			}
+		// bottom bound / floor
+		if (this.y + this.radius >= this.game.surfaceHeight) {
+			this.velocity.y = -this.velocity.y;
+			this.y = this.game.surfaceHeight - this.radius;
+		}
+		// top bound / ceiling
+		if (this.y - this.radius <= 0) {
+			this.velocity.y = -this.velocity.y;
+			this.y = this.radius;
 		}
 
-		switch (this.behavior) {
-			case (0):
-				this.velocity.x -= this.speed;
-				break;
-			case (1):
-				this.velocity.x += this.speed;
-				break;
-			case (2):
-				this.velocity.y -= this.speed;
-				break;
-			case (3):
-				this.velocity.y += this.speed;
-				break;
+		// left bound
+		if (this.x - this.radius <= 0) {
+			this.velocity.x = -this.velocity.x;
+			this.x = this.radius;
+		}
+		// right bound
+		if (this.x + this.radius >= this.game.surfaceWidth) {
+			this.velocity.x = -this.velocity.x;
+			this.x = this.game.surfaceWidth - this.radius;
 		}
 
-		//update position and bounding box
-		this.x += (this.velocity.x * TICK);
-		this.y += (this.velocity.y * TICK);
+		this.x += this.velocity.x;
+		this.y += this.velocity.y;
 
-		if (this.velocity.y >= MAX_SPD) this.velocity.y = MAX_SPD;
-		if (this.velocity.y <= -MAX_SPD) this.velocity.y = -MAX_SPD;
-		if (this.velocity.x >= MAX_SPD) this.velocity.x = MAX_SPD
-		if (this.velocity.x <= -MAX_SPD) this.velocity.x = -MAX_SPD;
+	};
 
-
+	reverse() {
+		let bounce = this.radius * 2;
+		if (this.behavior == 0) { //left out
+			this.x += bounce;
+			this.behavior = 1;
+		} else if (this.behavior == 1) { //right
+			this.x -= bounce;
+			this.behavior = 0;
+		} else if (this.behavior == 2) { //up
+			this.y += bounce;
+			this.behavior = 3;
+		} else { //down
+			this.y -= bounce;
+			this.behavior = 2;
+		}
 	};
 
 
@@ -96,6 +113,13 @@ class Target {
 			ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 			ctx.closePath();
 			ctx.stroke();
+
+			//debug text
+			let xy = ("(" + this.x + ", " + this.y + ")");
+			ctx.fillText(xy, this.x + this.radius, this.y + this.radius);
+			ctx.fillText("Speed: " + this.speed, this.x + this.radius, this.y + this.radius + 10);
+			ctx.fillText("Hit: " + this.hit, this.x + this.radius, this.y + this.radius + 20);
+			
 		}
 
 	};
@@ -108,11 +132,11 @@ class Target {
 	// 	let Ay = A.y;
 	// 	let Bx = B.x;
 	// 	let By = B.y;
-	
+
 	// 	//correction offset
 	// 	if(A instanceof Target) Ax += A.radius; Ay += A.radius;
 	// 	if(B instanceof Target) Bx += B.radius; By += B.radius;
-	
+
 	// 	let dist = Math.sqrt((Bx - Ax) * (Bx - Ax) + (By - Ay)*(By - Ay));
 	// 	return (dist < A.radius + B.radius);
 	// };

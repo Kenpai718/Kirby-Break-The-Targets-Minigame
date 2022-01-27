@@ -33,7 +33,7 @@ class CupidKirby {
 		this.x = x;
 		this.y = this.groundLevel;
 		this.width = 25 * this.scaling;
-		this.height = 18 * this.scaling;
+		this.height = 22 * this.scaling;
 
 
 
@@ -50,6 +50,7 @@ class CupidKirby {
 
 		this.inAir = false;
 		this.flightMode = false;
+		this.shoot_spd = .05; //controls how fast kirby can shoot arrows in seconds
 
 
 
@@ -95,17 +96,17 @@ class CupidKirby {
 		this.animations[0][this.states.falling] = new Animator(this.spritesheet, 209, 29, 29, 27, 6, 0.1, 0, false, true, true);
 		this.animations[1][this.states.falling] = new Animator(this.spritesheet, 209, 29, 29, 27, 6, 0.1, 0, false, true, false);
 
-		//ground shoot
-		this.animations[0][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, 0.05, 2, false, false, true);
-		this.animations[1][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, 0.05, 2, false, false, false);
-
-		//air shoot
-		this.animations[0][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, 0.05, 0, false, false, true);
-		this.animations[1][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, 0.05, 0, false, false, false);
-
 		//fly
 		this.animations[0][this.states.flying] = new Animator(this.spritesheet, 0, 61, 30, 29, 9, 0.1, 0, false, true, true);
 		this.animations[1][this.states.flying] = new Animator(this.spritesheet, 0, 61, 30, 29, 9, 0.1, 0, false, true, false);
+
+		//ground shoot
+		this.animations[0][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, this.shoot_spd, 2, false, false, true);
+		this.animations[1][this.states.ground_shoot] = new Animator(this.spritesheet, 0, 95, 36, 35, 7, this.shoot_spd, 2, false, false, false);
+
+		//air shoot
+		this.animations[0][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, this.shoot_spd, 0, false, false, true);
+		this.animations[1][this.states.air_shoot] = new Animator(this.spritesheet, 269, 61, 38, 33, 6, this.shoot_spd, 0, false, false, false);
 
 
 	};
@@ -164,6 +165,9 @@ class CupidKirby {
 				this.velocity.y -= JUMP_HEIGHT;
 				this.game.jump = false;
 				this.inAir = true;
+
+				//play jump sound
+				ASSET_MANAGER.playAsset("./sound/jump.wav");
 			}
 
 		} else { //air physics
@@ -197,26 +201,26 @@ class CupidKirby {
 				this.resetAnimationTimers(this.states.jump);
 			}
 
-			if(this.flightMode && !this.game.jump) { //free movement
+			if (this.flightMode && !this.game.jump) { //free movement
 				this.action = this.states.flying;
 				this.velocity.x = 0;
 				this.velocity.y = 0;
 
-				if(this.game.right && !this.game.left) {
+				if (this.game.right && !this.game.left) {
 					this.facing = this.dir.right;
 					this.velocity.x += MAX_RUN;
-				} else if(this.game.left && !this.game.right) {
+				} else if (this.game.left && !this.game.right) {
 					this.facing = this.dir.left;
 					this.velocity.x -= MAX_RUN;
 				}
 
-				if(this.game.up && !this.game.down) {
+				if (this.game.up && !this.game.down) {
 					this.velocity.y -= MAX_RUN;
-				} else if(this.game.down && !this.game.up) {
+				} else if (this.game.down && !this.game.up) {
 					this.velocity.y += MAX_RUN;
 				}
 
-			} else if(this.flightMode && this.game.jump && this.inAir) {
+			} else if (this.flightMode && this.game.jump && this.inAir) {
 				this.action = this.states.falling;
 				this.flightMode = false;
 				this.velocity.y += WALK_FALL;
@@ -247,6 +251,7 @@ class CupidKirby {
 
 				//spawn the arrow
 				this.game.addEntityToFront(new Arrow(this.game, this.x + this.width, this.y + this.height / 2, this.game.mouse));
+				ASSET_MANAGER.playAsset("./sound/shoot.wav");
 			}
 
 		} else {
@@ -257,7 +262,7 @@ class CupidKirby {
 
 
 		//constant falling velocity
-		if(!this.flightMode) this.velocity.y += this.fallAcc * TICK;
+		if (!this.flightMode) this.velocity.y += this.fallAcc * TICK;
 
 
 		// max y velocity
@@ -277,9 +282,15 @@ class CupidKirby {
 
 
 		//border that prevents kirby from walking outside the canvas
-		if (this.x > this.game.surfaceWidth - this.width|| this.x < 0) {
-			this.x = this.x < 0 ? 0: this.game.surfaceWidth - this.width;
+		if (this.x > this.game.surfaceWidth - this.width || this.x < 0) {
+			this.x = this.x < 0 ? 0 : this.game.surfaceWidth - this.width;
 			this.y = this.y;
+		}
+
+		//prevent flying up above screen
+		if (this.y > this.game.surfaceHeight - this.height || this.y < 0) {
+			this.y = this.y < 0 ? 0 : this.game.surfaceHeight - this.height;
+			this.x = this.x;
 		}
 
 		//do collisions detection here
@@ -355,14 +366,14 @@ class CupidKirby {
 
 		this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scaling);
 
-		
+
 		if (PARAMS.DEBUG) {
 			//console.log("here");
 			this.viewBoundingBox(ctx);
-			ctx.strokeStyle = "SpringGreen";
-			ctx.fillText("Action: " + this.action, 10, 30);
-			ctx.fillText("Flight Mode: " + this.flightMode, 10, 40);
-			ctx.fillText("In air: " + this.inAir, 10, 50);
+			// ctx.strokeStyle = "SpringGreen";
+			// ctx.fillText("Action: " + this.action, 10, 30);
+			// ctx.fillText("Flight Mode: " + this.flightMode, 10, 40);
+			// ctx.fillText("In air: " + this.inAir, 10, 50);
 		}
 	};
 

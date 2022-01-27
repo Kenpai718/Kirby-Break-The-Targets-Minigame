@@ -22,8 +22,8 @@ class GameEngine {
         this.up = null;
         this.jump = null;
         this.attack = null;
-        this.roll = null;
 
+        //stats
         this.numHit = 0;
         this.numFired = 0;
 
@@ -172,9 +172,6 @@ class GameEngine {
                 case "p":
                     that.attack = true;
                     break;
-                case "Shift":
-                    that.roll = true;
-                    break;
                 case " ":
                     that.jump = true;
                     break;
@@ -195,13 +192,6 @@ class GameEngine {
                     break;
                 case "w":
                     that.up = false;
-                    break;
-                case "p":
-                    //hacky solution to a combo system
-                    //combo counter only incremented when the key is released
-                    //reset this counter from player entity
-                    that.comboCounter += 1;
-                    //console.log(that.comboCounter);
                     break;
             }
         }, false);
