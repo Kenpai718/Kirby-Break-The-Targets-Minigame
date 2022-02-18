@@ -43,15 +43,15 @@ class Target {
 				this.point = 2;
 				break;
 			case this.colorType.yellow:
-				this.setSpeeds(4, 6);
+				this.setSpeeds(4, 7);
 				this.point = 3;
 				break;
 			case this.colorType.green:
-				this.setSpeeds(6, 8);
+				this.setSpeeds(7, 10);
 				this.point = 4;
 				break;
 			case this.colorType.blue:
-				this.setSpeeds(8, 10);
+				this.setSpeeds(9, 13);
 				this.point = 5;
 				break;
 		}
@@ -70,7 +70,7 @@ class Target {
 
 	setDirAndSpeed() {
 		this.behavior = randomInt(4); //0 = left, 1 = right, 2 = up, 3 = down
-		this.speed = Math.floor(Math.random() * (this.myMaxSpd - this.myMinSpd) + 1); //in range is (max - min) *min
+		this.speed = getRandomIntInRange(this.myMinSpd, this.myMaxSpd); //in range is (max - min) *min
 		switch (this.behavior) {
 			case (0):
 				this.direction = "left";

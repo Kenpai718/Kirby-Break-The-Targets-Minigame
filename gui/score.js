@@ -116,14 +116,14 @@ class ScoreBoard {
         let finalMsg = (this.myPoints > this.myHighScore) ? "NEW HIGH SCORE!" : "No new record...";
         let labels = [
             "REPORT CARD",
-            "[BONUSES]: ",
+            "BONUSES: ",
             "COMBOS:10*" + this.myMaxCombo + "= " + this.myComboBonus,
             "WAVES:10*" + this.myWave + "= " + this.myWaveBonus,
             "ACCURACY:10*" + (this.myAccuracy / 100).toFixed(2) + "= " + this.myAccuracyBonus,
             "",
-            "FINAL RESULTS:",
-            "TOTAL-POINTS= " + this.myPoints,
-            "HIGH-SCORE  = " + this.myHighScore,
+            "FINAL-RESULTS:",
+            "TOTAL-POINTS        =" + this.myPoints,
+            "PREVIOUS HIGH-SCORE =" + this.myHighScore,
             "",
             finalMsg
         ]
@@ -153,8 +153,8 @@ class ScoreBoard {
             "Points: " + this.myPoints
         ]
 
-        ctx.filter = "Opacity(50%)";
-        this.drawLabelsRight(ctx, labelsRight, fontH, "lightseagreen");
+        ctx.filter = "Opacity(95%)";
+        this.drawLabelsRight(ctx, labelsRight, fontH, "Azure");
         ctx.filter = "none";
 
         this.drawLabelsLeft(ctx, labelsLeft, fontH, "PaleVioletRed");
@@ -165,7 +165,7 @@ class ScoreBoard {
         ctx.font = '60 px "Press Start 2P"';
         ctx.fillStyle = "black";
         ctx.fillText("Time Left: " + time, 11, 41);
-        (time >= (DEFAULT_GAME_TIMER * .3)) ? ctx.fillStyle = "White" :
+        (time >= (DEFAULT_GAME_TIMER * .35)) ? ctx.fillStyle = "White" :
             (time >= (DEFAULT_GAME_TIMER * .1)) ? ctx.fillStyle = "Yellow" : ctx.fillStyle = "Red";
         ctx.fillText("Time Left: " + time, 10, 40);
     }

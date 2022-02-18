@@ -2,8 +2,10 @@
 <html>
 
 <head>
+    
+<body text="#ffffff" , style="background: rgb(36, 35, 35, 0.993)">
     <meta charset="utf-8">
-    <title>(WIP) Kirby: Target Practice</title>
+    <title>Kirby: Target Practice</title>
     <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Press+Start+2P">
 
@@ -30,13 +32,14 @@
 </head>
 
 <body>
-    <div><b>Kirby: Break the Targets [PROTOTYPE]</b></div>
+    <div><b>Kirby: Break the Targets Minigame</b></div>
     <div>Fan-based project developed by Kenneth Ahrens</div>
+    <div>Inspired from Smash Bros and Kirby</div>
     <canvas id="gameWorld" width="1024" height="800" style="background: white; border: 1px solid black" tabindex="0"
         autofocus></canvas>
     <div>
         <input type="checkbox" id="debug"> Debug <input type="checkbox" id="mute"> Mute <input type="range" id="volume"
-            min="0" max="1" value="0.1" step="0.05"> Volume
+            min="0" max="1" value="0.5" step="0.05"> Volume
 
     </div>
 
@@ -58,6 +61,8 @@
         <p></p>
         <b>HINTS:</b>
         <li>Position Kirby closer to the target to make it easier to hit!</li>
+        <li>Different colored targets yield different points and have different behavior.</li>
+        <li>Skill based bonuses are applied at the end such as accuracy and max combo!</li>
     </ul>
 
 </body>

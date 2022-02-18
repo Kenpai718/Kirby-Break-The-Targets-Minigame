@@ -69,9 +69,9 @@ class SceneManager {
         let creditInfo =
             ["Developed by:",
                 "Kenneth Ahrens (Kenpai)",
+                "Contact: @KaioKenpai (Twitter)",
                 "",
                 "TCSS 491: Computational Worlds",
-                "Project started in Winter 2022",
                 "Special Thanks to Chris Marriot!"
             ]
 
@@ -238,12 +238,23 @@ class SceneManager {
             this.myScoreBoard.draw(ctx);
         }
 
+
+        //canvas settings 
         if (PARAMS.DEBUG) {
             //console.log("debug");
             this.viewDebug(ctx);
         }
+        this.updateAudio();
 
     };
+
+    updateAudio() {
+        let mute = document.getElementById("mute").checked;
+        let volume = document.getElementById("volume").value;
+        ASSET_MANAGER.muteAudio(mute);
+        ASSET_MANAGER.adjustVolume(volume);
+    };
+
 
     /**
      * Restarts game and keeps stats

@@ -1,6 +1,6 @@
 /** Global Parameters Object */
 const DEFAULT_FONT_SIZE = 10;   //in pixels
-const DEFAULT_GAME_TIMER = 5; //in seconds
+const DEFAULT_GAME_TIMER = 100; //in seconds
 const PARAMS = {
     DEBUG: false,
     BLOCKWIDTH: 64,
@@ -160,4 +160,17 @@ function drawWithBorder(ctx, theText, theX, theY, theColor) {
     ctx.fillText(theText, theX + 5, theY + 5);
     ctx.fillStyle = theColor;
     ctx.fillText(theText, theX + 1, theY + 1);
+}
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+ function getRandomIntInRange(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
