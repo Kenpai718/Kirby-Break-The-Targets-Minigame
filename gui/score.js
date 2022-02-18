@@ -119,7 +119,7 @@ class ScoreBoard {
             "BONUSES: ",
             "COMBOS:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
             "WAVES:" + this.myWave + "*" + this.myBonus + " = " + this.myWaveBonus,
-            "ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + this.myBonus + " = " + this.myAccuracyBonus,
+            "ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 100 + " = " + this.myAccuracyBonus,
             "",
             "FINAL-RESULTS:",
             "TOTAL-POINTS        =" + this.myPoints,
