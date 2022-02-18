@@ -39,6 +39,9 @@ class Score {
     };
 };
 
+/**
+ * Reports all stats in game
+ */
 class ScoreBoard {
     constructor(game) {
         this.game = game;
@@ -57,10 +60,15 @@ class ScoreBoard {
 
         this.elapsed = 0;
         this.playCongrats = false;
+
+        let boxX = 450;
+        let boxY = 1020;
+        this.myReportBox = new SceneTextBox(this.game, boxX, boxY, "");
     }
 
     reset() {
         this.setHighScore();
+        this.myReportBox.show = false;
         this.playCongrats = false;
         this.myNumHit = 0;
         this.myNumShots = 0;
@@ -107,20 +115,23 @@ class ScoreBoard {
         let fontSize = 40;
         let finalMsg = (this.myPoints > this.myHighScore) ? "NEW HIGH SCORE!" : "No new record...";
         let labels = [
+            "REPORT CARD",
             "[BONUSES]: ",
             "COMBOS:10*" + this.myMaxCombo + "= " + this.myComboBonus,
             "WAVES:10*" + this.myWave + "= " + this.myWaveBonus,
             "ACCURACY:10*" + (this.myAccuracy / 100).toFixed(2) + "= " + this.myAccuracyBonus,
             "",
-            "[FINAL RESULTS]:",
+            "FINAL RESULTS:",
             "TOTAL-POINTS= " + this.myPoints,
-            "HIGH-SCORE=   " + this.myHighScore,
+            "HIGH-SCORE  = " + this.myHighScore,
             "",
             finalMsg
         ]
 
-        ctx.font = fontSize + 'px "Press Start 2P"';
-        this.drawLabelsLeft(ctx, labels, fontSize, "MidnightBlue");
+        this.myReportBox.setMessage(labels, true);
+        this.myReportBox.draw(ctx);
+        //ctx.font = fontSize + 'px "Press Start 2P"';
+        //this.drawLabelsLeft(ctx, labels, fontSize, "MidnightBlue");
     }
 
     drawScoreBoard(ctx) {
@@ -146,7 +157,7 @@ class ScoreBoard {
         this.drawLabelsRight(ctx, labelsRight, fontH, "lightseagreen");
         ctx.filter = "none";
 
-        this.drawLabelsLeft(ctx, labelsLeft, fontH, "pink");
+        this.drawLabelsLeft(ctx, labelsLeft, fontH, "PaleVioletRed");
 
         //draw time top left BIG
         let time = Math.round(this.game.camera.myTimer);

@@ -51,6 +51,36 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 7) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.creditsBB = new BoundingBox(x, y, 40 * 7, -40);
+
+        //text boxes for the title screen
+        let controlInfo =
+            ["Controls:",
+                "A: Left",
+                "D: Right",
+                "W: Ascend (in flying mode)",
+                "S: Descend (in flying mode)",
+                "SPACE: Jump, double tap for FLYING MODE",
+                "Left-Click: Shoot arrow in cursor direction",
+                "",
+                "GOAL:",
+                "Shoot as many targets as possible within a",
+                "time limit and aim for a high score!"
+            ];
+        let creditInfo =
+            ["Developed by:",
+                "Kenneth Ahrens (Kenpai)",
+                "",
+                "TCSS 491: Computational Worlds",
+                "Project started in Winter 2022",
+                "Special Thanks to Chris Marriot!"
+            ]
+
+        let creditX = this.game.surfaceWidth / 2.5;
+        let creditY = this.game.surfaceHeight + 100;
+        let controlX = this.game.surfaceWidth / 2.5 - 25;
+        let controlY = this.game.surfaceHeight + 300;
+        this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
+        this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
     }
 
     /**
@@ -63,10 +93,10 @@ class SceneManager {
         // var y = (this.game.surfaceHeight / 2) - 40;
         // this.nextLevelBB = new BoundingBox(x, y, 40 * 10, -40);
         var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
-        var y = (this.game.surfaceHeight / 2) + 160;
+        var y = (this.game.surfaceHeight / 3);
         this.restartLevelBB = new BoundingBox(x, y, 40 * 13, -40);
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
-        y = (this.game.surfaceHeight / 2) + 240;
+        y = (this.game.surfaceHeight / 3) + 75;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
     };
 
@@ -94,7 +124,7 @@ class SceneManager {
 
 
         if (this.title) {
-            
+
             this.textColor = 0;
             if (this.game.mouse) {
                 if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
@@ -169,7 +199,7 @@ class SceneManager {
             let gameTitle = "Kirby's Target Practice";
 
             ctx.font = titleFont;
-            drawWithBorder(ctx, gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 1, fontSize * 3 + 1, "Pink");
+            drawWithBorder(ctx, gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 1, fontSize * 3 + 1, "Orchid");
 
             ctx.font = '40px "Press Start 2P"';
             ctx.fillStyle = this.textColor == 1 ? "DeepPink" : "Black";
@@ -179,14 +209,23 @@ class SceneManager {
             ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
             ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
             ctx.strokeStyle = "Red";
+
+            if (this.controls) {
+                this.myControlBox.show = true;
+                this.myControlBox.draw(ctx);
+            }
+            if (this.credits) {
+                this.myCreditBox.show = true;
+                this.myCreditBox.draw(ctx);
+            }
         } else if (this.transition) {
             var fontSize = 55;
             ctx.font = fontSize + 'px "Press Start 2P"';
             let gameTitle = "Mission Complete!";
             ctx.fillStyle = "Black";
-            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 3, fontSize * 9 + 3);
+            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 3, fontSize * 3 + 3);
             ctx.fillStyle = "White";
-            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 9);
+            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
 
             ctx.font = '40px "Press Start 2P"';
             ctx.fillStyle = this.textColor == 2 ? "BlueViolet" : "Black";

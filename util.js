@@ -1,6 +1,6 @@
 /** Global Parameters Object */
 const DEFAULT_FONT_SIZE = 10;   //in pixels
-const DEFAULT_GAME_TIMER = 100; //in seconds
+const DEFAULT_GAME_TIMER = 5; //in seconds
 const PARAMS = {
     DEBUG: false,
     BLOCKWIDTH: 64,
