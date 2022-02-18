@@ -89,7 +89,7 @@ class ScoreBoard {
 
     calculateBonus() {
         this.myComboBonus = this.myBonus * this.myMaxCombo;
-        this.myAccuracyBonus = Math.round(this.myBonus * this.myAccuracy / 100);
+        this.myAccuracyBonus = Math.round(100 * this.myAccuracy / 100);
         this.myWaveBonus = this.myBonus * this.myWave;
 
         this.myPoints += (this.myComboBonus) + this.myAccuracyBonus + this.myWaveBonus;
