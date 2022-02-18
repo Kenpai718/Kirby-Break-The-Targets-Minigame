@@ -68,8 +68,8 @@ class Arrow {
         this.facing = getFacing(this.velocity);
 
         //handles hitting a target and updating the score
-        for (var i = 0; i < this.game.entities.length; i++) {
-            var ent = this.game.entities[i];
+        for (var i = 0; i < this.game.targets.length; i++) {
+            var ent = this.game.targets[i];
             if (ent instanceof Target && collide(this, ent)) {
                 if(!ent.hit) {
                     ent.hit = true; //so target cant be hit multiple times

@@ -1,7 +1,7 @@
 // This game shell was happily modified from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
 class GameEngine {
-    
+
     constructor(options) {
         // What you will use to draw
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
@@ -9,6 +9,9 @@ class GameEngine {
 
         // Everything that will be updated and drawn each frame
         this.entities = [];
+        this.targets = [];
+        this.environment = [];
+        this.background = [];
 
         // Information on the input
         this.click = null;
@@ -86,15 +89,15 @@ class GameEngine {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
-            
+
             this.click = getXandY(e);
-            
+
             //set attack
             switch (e.which) {
                 case 1:
                     //alert('Left Mouse button pressed.');
                     that.attack = true;
-                    that.numFired++;
+                    that.myScoreBoard.myNumShots++;
                     break;
                 case 2:
                     //alert('Middle Mouse button pressed.');
@@ -105,7 +108,7 @@ class GameEngine {
 
             }
 
-        
+
         });
 
         //release mouse click
@@ -113,9 +116,9 @@ class GameEngine {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
-            
+
             this.click = getXandY(e);
-            
+
             switch (e.which) {
                 case 1:
                     //alert('Left Mouse button release.');
@@ -129,7 +132,7 @@ class GameEngine {
 
             }
 
-        
+
         });
 
         this.ctx.canvas.addEventListener("wheel", e => {
@@ -200,11 +203,17 @@ class GameEngine {
     };
 
     addEntity(entity) {
-        this.entities.push(entity);
+        if (entity instanceof Target) this.targets.push(entity);
+        else if(entity instanceof Ground) this.environment.push(entity);
+        else if(entity instanceof Background) this.background.push(entity);
+        else this.entities.push(entity);
     };
 
     addEntityToFront(entity) {
-        this.entities.unshift(entity);
+        if (entity instanceof Target) this.targets.unshift(entity);
+        else if(entity instanceof Ground) this.environment.unshift(entity);
+        else if(entity instanceof Background) this.background.unshift(entity);
+        else this.entities.unshift(entity);
     };
 
 
@@ -213,9 +222,22 @@ class GameEngine {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         // Draw latest things first
+        for (let i = this.background.length - 1; i >= 0; i--) {
+            this.background[i].draw(this.ctx, this);
+        }
+
+        for (let i = this.environment.length - 1; i >= 0; i--) {
+            this.environment[i].draw(this.ctx, this);
+        }
+
+        for (let i = this.targets.length - 1; i >= 0; i--) {
+            this.targets[i].draw(this.ctx, this);
+        }
+
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
+
 
 
         //update the camera (scene manager)
@@ -225,23 +247,39 @@ class GameEngine {
     update() {
         let entitiesCount = this.entities.length;
 
+        this.updateLayer(this.background);
+        this.updateLayer(this.environment);
+        this.updateLayer(this.entities);
+        this.updateLayer(this.targets);
+
+        this.removeFromLayer(this.background);
+        this.removeFromLayer(this.environment);
+        this.removeFromLayer(this.entities);
+        this.removeFromLayer(this.targets);
+
+
+        //update the camera (scene manager)
+        this.camera.update();
+    };
+
+    updateLayer(layer) {
+        let entitiesCount = layer.length;
         for (let i = 0; i < entitiesCount; i++) {
-            let entity = this.entities[i];
+            let entity = layer[i];
 
             if (!entity.removeFromWorld) {
                 entity.update();
             }
         }
+    }
 
-        for (let i = this.entities.length - 1; i >= 0; --i) {
-            if (this.entities[i].removeFromWorld) {
-                this.entities.splice(i, 1);
+    removeFromLayer(layer) {
+        for (let i = layer.length - 1; i >= 0; --i) {
+            if (layer[i].removeFromWorld) {
+                layer.splice(i, 1);
             }
         }
-
-        //update the camera (scene manager)
-        this.camera.update();
-    };
+    }
 
     loop() {
         this.clockTick = this.timer.tick();

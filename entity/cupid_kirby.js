@@ -312,7 +312,7 @@ class CupidKirby {
 	handleCollisions() {
 		//do collisions detection here
 		let that = this;
-		this.game.entities.forEach(function (entity) {
+		this.game.environment.forEach(function (entity) {
 
 			//buffers for collision placement
 			let bonkBuffer = 15;
