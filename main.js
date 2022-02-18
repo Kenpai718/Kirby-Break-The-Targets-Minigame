@@ -20,11 +20,16 @@ ASSET_MANAGER.queueDownload("./sprites/environment/ground_tiles.png");
 
 //music
 ASSET_MANAGER.queueDownload("./music/break_the_targets_melee.mp3");
-ASSET_MANAGER.queueDownload("./sound/hitsound.wav");
-ASSET_MANAGER.queueDownload("./sound/bonus.mp3");
-ASSET_MANAGER.queueDownload("./sound/poyo.mp3");
-ASSET_MANAGER.queueDownload("./sound/shoot.wav");
-ASSET_MANAGER.queueDownload("./sound/jump.wav");
+
+//sfx
+ASSET_MANAGER.queueDownload(SFX.PING);
+ASSET_MANAGER.queueDownload(SFX.BONUS);
+ASSET_MANAGER.queueDownload(SFX.POYO);
+ASSET_MANAGER.queueDownload(SFX.SHOOT);
+ASSET_MANAGER.queueDownload(SFX.JUMP);
+ASSET_MANAGER.queueDownload(SFX.CLICK);
+ASSET_MANAGER.queueDownload(SFX.GO);
+ASSET_MANAGER.queueDownload(SFX.GAME);
 
 
 ASSET_MANAGER.downloadAll(() => {

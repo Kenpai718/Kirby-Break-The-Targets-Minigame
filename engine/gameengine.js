@@ -94,7 +94,7 @@ class GameEngine {
                 case 1:
                     //alert('Left Mouse button pressed.');
                     that.attack = true;
-                    that.myScoreBoard.myNumShots++;
+                    that.numFired++;
                     break;
                 case 2:
                     //alert('Middle Mouse button pressed.');

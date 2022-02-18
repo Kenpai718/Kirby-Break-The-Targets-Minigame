@@ -74,7 +74,7 @@ class Arrow {
                 if(!ent.hit) {
                     ent.hit = true; //so target cant be hit multiple times
                     ent.removeFromWorld = true;
-                    ASSET_MANAGER.playAsset("./sound/hitsound.wav");
+                    ASSET_MANAGER.playAsset(SFX.PING);
                     this.game.addEntityToFront(new Score(this.game, ent, ent.getPoint()));
 
                     this.updateTargetScore(ent);

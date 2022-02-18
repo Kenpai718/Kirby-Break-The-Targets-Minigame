@@ -1,5 +1,6 @@
 /** Global Parameters Object */
-const DEFAULT_FONT_SIZE = 10;
+const DEFAULT_FONT_SIZE = 10;   //in pixels
+const DEFAULT_GAME_TIMER = 100; //in seconds
 const PARAMS = {
     DEBUG: false,
     BLOCKWIDTH: 64,
@@ -7,6 +8,19 @@ const PARAMS = {
     BIG_FONT: (DEFAULT_FONT_SIZE * 5) + 'px "Press Start 2P"',       //font used for big moments like damage numbers
     DEFAULT_FONT: DEFAULT_FONT_SIZE + 'px "Press Start 2P"',    //regular font
 };
+
+const SFX = {
+    PING: "./sound/hitsound.wav",
+    BONUS: "./sound/hitsound.wav",
+    POYO: "./sound/poyo.mp3",
+    SHOOT: "./sound/shoot.wav",
+    JUMP: "./sound/jump.wav",
+    RECORD:  "./sound/new_record.mp3",
+    WOW: "./sound/incredible.mp3",
+    CLICK: "./sound/click.wav",
+    GO: "./sound/go.mp3",
+    GAME: "./sound/game.mp3"
+}
 
 function getFacing(velocity) {
     if (velocity.x === 0 && velocity.y === 0) return 4;
@@ -139,4 +153,11 @@ const chooseRandom = items => items.length > 0
 */
 function getRightOffset(theText, fontSize) {
     return (theText.length) * (fontSize) + 10;
+}
+
+function drawWithBorder(ctx, theText, theX, theY, theColor) {
+    ctx.fillStyle = "Black";
+    ctx.fillText(theText, theX + 5, theY + 5);
+    ctx.fillStyle = theColor;
+    ctx.fillText(theText, theX + 1, theY + 1);
 }

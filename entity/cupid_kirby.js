@@ -1,3 +1,30 @@
+const SCALER = 3;
+
+//currently using Chris Marriot's mario physics
+const MIN_WALK = 4.453125 * SCALER;
+const MAX_WALK = 93.75 * SCALER;
+const MAX_RUN = 153.75 * SCALER;
+const ACC_WALK = 133.59375 * SCALER;
+const ACC_RUN = 200.390625 * SCALER;
+const DEC_REL = 182.8125 * SCALER;
+const DEC_SKID = 365.625 * SCALER;
+const MIN_SKID = 33.75 * SCALER;
+const ROLL_SPD = 400 * SCALER;
+const DOUBLE_JUMP_X_BOOST = 10;
+
+
+const STOP_FALL = 1575;
+const WALK_FALL = 1800;
+const RUN_FALL = 2025;
+const STOP_FALL_A = 450;
+const WALK_FALL_A = 421.875;
+const RUN_FALL_A = 562.5;
+const JUMP_HEIGHT = 1500;
+const DOUBLE_JUMP_HEIGHT = 200;
+
+
+const MAX_FALL = 270 * SCALER;
+
 class CupidKirby {
 	constructor(game, x, y) {
 		Object.assign(this, { game, x, y });
@@ -112,33 +139,85 @@ class CupidKirby {
 	};
 
 	update() {
+		if (!this.game.camera.title && !this.game.camera.transition) {
+			this.doMovement();
+			this.doAttack();
+		}
+		this.setVelocityAndPosition();
+		this.checkBorders();
+		this.handleCollisions();
+	};
+
+	checkBorders() {
+		//border that prevents kirby from walking outside the canvas
+		if (this.x > this.game.surfaceWidth - this.width || this.x < 0) {
+			this.x = this.x < 0 ? 0 : this.game.surfaceWidth - this.width;
+			this.y = this.y;
+		}
+
+		//prevent flying up above screen
+		if (this.y > this.game.surfaceHeight - this.height || this.y < 0) {
+			this.y = this.y < 0 ? 0 : this.game.surfaceHeight - this.height;
+			this.x = this.x;
+		}
+	}
+
+	setVelocityAndPosition() {
 		const TICK = this.game.clockTick;
-		const SCALER = 3;
+		//constant falling velocity
+		if (!this.flightMode) this.velocity.y += this.fallAcc * TICK;
+		// max y velocity
+		if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
+		if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
+		//max x velocity
+		let doubleJumpBonus = 0;
+		if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
+		if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
+		if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
+		//update position and bounding box
+		this.x += this.velocity.x * TICK;
+		this.y += this.velocity.y * TICK;
+		this.updateBB();
+	}
 
-		//currently using Chris Marriot's mario physics
-		const MIN_WALK = 4.453125 * SCALER;
-		const MAX_WALK = 93.75 * SCALER;
-		const MAX_RUN = 153.75 * SCALER;
-		const ACC_WALK = 133.59375 * SCALER;
-		const ACC_RUN = 200.390625 * SCALER;
-		const DEC_REL = 182.8125 * SCALER;
-		const DEC_SKID = 365.625 * SCALER;
-		const MIN_SKID = 33.75 * SCALER;
-		const ROLL_SPD = 400 * SCALER;
-		const DOUBLE_JUMP_X_BOOST = 10;
+	doAttack() {
+		//attack
+		if (this.game.attack) {
 
+			if (this.inAir) { //air shot
+				this.action = this.states.air_shoot
+			} else { //regular attack
+				this.action = this.states.ground_shoot;
+			}
 
-		const STOP_FALL = 1575;
-		const WALK_FALL = 1800;
-		const RUN_FALL = 2025;
-		const STOP_FALL_A = 450;
-		const WALK_FALL_A = 421.875;
-		const RUN_FALL_A = 562.5;
-		const JUMP_HEIGHT = 1500;
-		const DOUBLE_JUMP_HEIGHT = 200;
+			//flip the direction if clicking in other direction
+			if (this.animations[this.facing][this.action].currentFrame() >= 4) {
+				let x = this.game.mouse.x;
+				if (x < this.x + this.width / 2)
+					this.facing = this.dir.left;
+				if (x > this.x + this.width / 2)
+					this.facing = this.dir.right;
+			}
 
+			let done = this.animations[this.facing][this.action].isDone();
 
-		const MAX_FALL = 270 * SCALER;
+			if (done) {
+				this.action = this.DEFAULT_ACTION;
+				this.game.attack = false; //stop attackin
+
+				//spawn the arrow
+				this.game.addEntityToFront(new Arrow(this.game, this.x + this.width, this.y + this.height / 2, this.game.mouse));
+				ASSET_MANAGER.playAsset(SFX.SHOOT);
+			}
+
+		} else {
+			this.resetAnimationTimers(this.states.air_shoot);
+			this.resetAnimationTimers(this.states.ground_shoot);
+		}
+	}
+
+	doMovement() {
+		const TICK = this.game.clockTick;
 
 		//make sure its not an action that should be interrupted
 		if (this.action != this.states.jump && !this.inAir) {
@@ -228,80 +307,7 @@ class CupidKirby {
 				//console.log("flight mode off falling");
 			}
 		}
-
-		//attack
-		if (this.game.attack) {
-
-			if (this.inAir) { //air shot
-				this.action = this.states.air_shoot
-			} else { //regular attack
-				this.action = this.states.ground_shoot;
-			}
-
-			//flip the direction if clicking in other direction
-			if(this.animations[this.facing][this.action].currentFrame() >= 4) {
-				let x = this.game.mouse.x;
-				if (x < this.x + this.width / 2)
-					this.facing = this.dir.left;
-				if (x > this.x + this.width / 2)
-					this.facing = this.dir.right;
-			}
-
-			let done = this.animations[this.facing][this.action].isDone();
-
-			if (done) {
-				this.action = this.DEFAULT_ACTION;
-				this.game.attack = false; //stop attackin
-
-				//spawn the arrow
-				this.game.addEntityToFront(new Arrow(this.game, this.x + this.width, this.y + this.height / 2, this.game.mouse));
-				ASSET_MANAGER.playAsset("./sound/shoot.wav");
-			}
-
-		} else {
-			this.resetAnimationTimers(this.states.air_shoot);
-			this.resetAnimationTimers(this.states.ground_shoot);
-		}
-
-
-
-		//constant falling velocity
-		if (!this.flightMode) this.velocity.y += this.fallAcc * TICK;
-
-
-		// max y velocity
-		if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-		if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-
-		//max x velocity
-		let doubleJumpBonus = 0;
-		if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
-		if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
-		if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
-
-		//update position and bounding box
-		this.x += this.velocity.x * TICK;
-		this.y += this.velocity.y * TICK;
-		this.updateBB();
-
-
-		//border that prevents kirby from walking outside the canvas
-		if (this.x > this.game.surfaceWidth - this.width || this.x < 0) {
-			this.x = this.x < 0 ? 0 : this.game.surfaceWidth - this.width;
-			this.y = this.y;
-		}
-
-		//prevent flying up above screen
-		if (this.y > this.game.surfaceHeight - this.height || this.y < 0) {
-			this.y = this.y < 0 ? 0 : this.game.surfaceHeight - this.height;
-			this.x = this.x;
-		}
-
-		this.handleCollisions();
-
-
-
-	};
+	}
 
 	handleCollisions() {
 		//do collisions detection here
