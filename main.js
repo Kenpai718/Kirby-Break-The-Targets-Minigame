@@ -30,6 +30,7 @@ ASSET_MANAGER.queueDownload(SFX.JUMP);
 ASSET_MANAGER.queueDownload(SFX.CLICK);
 ASSET_MANAGER.queueDownload(SFX.GO);
 ASSET_MANAGER.queueDownload(SFX.GAME);
+ASSET_MANAGER.queueDownload(SFX.RECORD);
 
 
 ASSET_MANAGER.downloadAll(() => {
@@ -39,7 +40,6 @@ ASSET_MANAGER.downloadAll(() => {
 
 	//auto replay music
 	ASSET_MANAGER.autoRepeat("./music/break_the_targets_melee.mp3");
-	ASSET_MANAGER.forcePlayMusic("./music/break_the_targets_melee.mp3");
 
 	gameEngine.init(ctx);
 	new SceneManager(gameEngine);

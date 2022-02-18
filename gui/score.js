@@ -12,7 +12,6 @@ class Score {
 
         this.velocity = -32;
         this.elapsed = 0;
-        console.log(this.x, this.y);
     };
 
     update() {
@@ -52,16 +51,32 @@ class ScoreBoard {
         this.myMaxCombo = 0;
         this.myWave = 0;
 
+        this.bonusMultiplier = 10;
+
         this.myHighScore = 0; //save this
+
+        this.elapsed = 0;
+        this.playCongrats = false;
     }
 
     reset() {
+        this.setHighScore();
+        this.playCongrats = false;
         this.myNumHit = 0;
         this.myNumShots = 0;
         this.myAccuracy = 0;
         this.myPoints = 0;
         this.myMaxCombo = 0;
         this.myWave = 0;
+        this.elapsed = 0;
+    }
+
+    setHighScore() {
+        this.myHighScore = Math.max(this.myPoints, this.myHighScore);
+    }
+
+    gotNewHighScore() {
+        return this.myHighScore < this.myPoints;
     }
 
     calculateBonus() {
@@ -70,23 +85,42 @@ class ScoreBoard {
         this.myWaveBonus = 10 * this.myWave;
 
         this.myPoints += (this.myComboBonus) + this.myAccuracyBonus + this.myWaveBonus;
-        this.myHighScore = Math.max(this.myPoints, this.myHighScore);
-
     }
 
     update() {
-        this.myAccuracy = ((this.myNumHit / this.myNumShots) * 100).toFixed(2);
-        this.myHighScore = Math.max(this.myPoints, this.myHighScore);
+        if (!this.game.camera.transition) {
+            this.myAccuracy = ((this.myNumHit / this.myNumShots) * 100).toFixed(2);
+        } else if (this.game.camera.transition) {
+            this.elapsed += this.game.clockTick;
+            if(this.gotNewHighScore() && (this.elapsed > 1.5) && !this.playCongrats) {
+                this.playCongrats = true;
+                ASSET_MANAGER.playAsset(SFX.RECORD);
+            }
+        }
     }
 
     draw(ctx) {
-
         this.drawScoreBoard(ctx);
-
     }
 
     drawReportCard(ctx) {
+        let fontSize = 40;
+        let finalMsg = (this.myPoints > this.myHighScore) ? "NEW HIGH SCORE!" : "No new record...";
+        let labels = [
+            "[BONUSES]: ",
+            "COMBOS:10*" + this.myMaxCombo + "= " + this.myComboBonus,
+            "WAVES:10*" + this.myWave + "= " + this.myWaveBonus,
+            "ACCURACY:10*" + (this.myAccuracy / 100).toFixed(2) + "= " + this.myAccuracyBonus,
+            "",
+            "[FINAL RESULTS]:",
+            "TOTAL-POINTS= " + this.myPoints,
+            "HIGH-SCORE=   " + this.myHighScore,
+            "",
+            finalMsg
+        ]
 
+        ctx.font = fontSize + 'px "Press Start 2P"';
+        this.drawLabelsLeft(ctx, labels, fontSize, "MidnightBlue");
     }
 
     drawScoreBoard(ctx) {
@@ -109,10 +143,10 @@ class ScoreBoard {
         ]
 
         ctx.filter = "Opacity(50%)";
-        this.drawLabelsRight(ctx, labelsRight, fontH);
+        this.drawLabelsRight(ctx, labelsRight, fontH, "lightseagreen");
         ctx.filter = "none";
 
-        this.drawLabelsLeft(ctx, labelsLeft, fontH);
+        this.drawLabelsLeft(ctx, labelsLeft, fontH, "pink");
 
         //draw time top left BIG
         let time = Math.round(this.game.camera.myTimer);
@@ -125,7 +159,7 @@ class ScoreBoard {
         ctx.fillText("Time Left: " + time, 10, 40);
     }
 
-    drawLabelsRight(ctx, theLabels, fontSize) {
+    drawLabelsRight(ctx, theLabels, fontSize, theColor) {
         ctx.align = "left";
         let buffer = 10;
         for (let i = 1; i <= theLabels.length; i++) {
@@ -135,20 +169,21 @@ class ScoreBoard {
 
             ctx.fillStyle = "black";
             ctx.fillText(label, x + 1, (i * fontSize) + buffer + 1);
-            ctx.fillStyle = "lightseagreen";
+            ctx.fillStyle = theColor
             ctx.fillText(label, x, (i * fontSize) + buffer);
         }
     }
 
-    drawLabelsLeft(ctx, theLabels, fontSize) {
+    drawLabelsLeft(ctx, theLabels, fontSize, theColor) {
         ctx.textAlign = "left";
         let buffer = 10;
         for (let i = 1; i <= theLabels.length; i++) {
             let label = theLabels[i - 1];
             ctx.fillStyle = "black";
             ctx.fillText(label, buffer, (i * fontSize) + buffer + 1);
-            ctx.fillStyle = "DeepPink";
+            ctx.fillStyle = theColor;
             ctx.fillText(label, buffer, (i * fontSize) + buffer);
         }
     }
+
 }

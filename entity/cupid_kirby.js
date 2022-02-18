@@ -381,10 +381,9 @@ class CupidKirby {
 		if (PARAMS.DEBUG) {
 			//console.log("here");
 			this.viewBoundingBox(ctx);
-			// ctx.strokeStyle = "SpringGreen";
-			// ctx.fillText("Action: " + this.action, 10, 30);
-			// ctx.fillText("Flight Mode: " + this.flightMode, 10, 40);
-			// ctx.fillText("In air: " + this.inAir, 10, 50);
+			ctx.font = "20px Arial";
+			ctx.fillStyle = "red";
+			ctx.fillText("[" + Math.round(this.x) + ", " + Math.round(this.y) + "]", this.x, this.y);
 		}
 	};
 

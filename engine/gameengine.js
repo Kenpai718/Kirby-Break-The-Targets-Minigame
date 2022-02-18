@@ -204,15 +204,15 @@ class GameEngine {
 
     addEntity(entity) {
         if (entity instanceof Target) this.targets.push(entity);
-        else if(entity instanceof Ground) this.environment.push(entity);
-        else if(entity instanceof Background) this.background.push(entity);
+        else if (entity instanceof Ground) this.environment.push(entity);
+        else if (entity instanceof Background) this.background.push(entity);
         else this.entities.push(entity);
     };
 
     addEntityToFront(entity) {
         if (entity instanceof Target) this.targets.unshift(entity);
-        else if(entity instanceof Ground) this.environment.unshift(entity);
-        else if(entity instanceof Background) this.background.unshift(entity);
+        else if (entity instanceof Ground) this.environment.unshift(entity);
+        else if (entity instanceof Background) this.background.unshift(entity);
         else this.entities.unshift(entity);
     };
 
@@ -286,6 +286,16 @@ class GameEngine {
         this.update();
         this.draw();
     };
+
+    /**
+* Clear a layer from entities list
+* @param {} layer
+*/
+    clearLayer(layer) {
+        layer.forEach(function (entity) {
+            entity.removeFromWorld = true;
+        });
+    }
 
 };
 

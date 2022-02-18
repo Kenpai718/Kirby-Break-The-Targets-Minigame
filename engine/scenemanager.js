@@ -34,6 +34,11 @@ class SceneManager {
         this.mySpawnTargets = 10;
     }
 
+    movePlayerToMiddle() {
+        this.player.x = 462;
+        this.player.y = 680;
+    }
+
 
     loadTitle() {
         this.title = true;
@@ -53,15 +58,15 @@ class SceneManager {
     */
     loadTransition() {
         this.transition = true;
-        this.clearEntities();
+        this.game.clearLayer(this.game.targets);
+        // var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
+        // var y = (this.game.surfaceHeight / 2) - 40;
+        // this.nextLevelBB = new BoundingBox(x, y, 40 * 10, -40);
         var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
-        var y = (this.game.surfaceHeight / 2) - 40;
-        this.nextLevelBB = new BoundingBox(x, y, 40 * 10, -40);
-        x = (this.game.surfaceWidth / 2) - ((40 * 13) / 2);
-        y = (this.game.surfaceHeight / 2) + 40;
+        var y = (this.game.surfaceHeight / 2) + 160;
         this.restartLevelBB = new BoundingBox(x, y, 40 * 13, -40);
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
-        y = (this.game.surfaceHeight / 2) + 40 * 3;
+        y = (this.game.surfaceHeight / 2) + 240;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
     };
 
@@ -80,13 +85,16 @@ class SceneManager {
 
     update() {
         if (this.myTimer <= 0) {
+            ASSET_MANAGER.playAsset(SFX.GAME);
             this.transition = true;
             this.myTimer = DEFAULT_GAME_TIMER;
-            ASSET_MANAGER.playAsset(SFX.GAME);
+            this.myScoreBoard.calculateBonus();
+            this.loadTransition();
         }
 
 
         if (this.title) {
+            
             this.textColor = 0;
             if (this.game.mouse) {
                 if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
@@ -113,7 +121,27 @@ class SceneManager {
                 this.game.click = null;
             }
         } else if (this.transition) { //results screen
+            this.textColor = 0;
+            if (this.game.mouse) {
+                if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 2;
+                } else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 3;
+                }
+            }
+            if (this.game.click) {
+                ASSET_MANAGER.playAsset(SFX.CLICK);
+                if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.game.attack = false;
+                    this.restartGame();
+                } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.title = true;
+                    this.transition = false;
+                }
+                this.game.click = null;
+            }
 
+            this.myScoreBoard.update();
         } else { //game is playing
             this.myTimer -= this.game.clockTick;
             this.myScoreBoard.update();
@@ -129,10 +157,6 @@ class SceneManager {
                 this.spawnTargets(10);
             }
         }
-
-
-
-        //console.log(this.targets);
         PARAMS.DEBUG = document.getElementById("debug").checked;
     };
 
@@ -155,9 +179,24 @@ class SceneManager {
             ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
             ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
             ctx.strokeStyle = "Red";
+        } else if (this.transition) {
+            var fontSize = 55;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            let gameTitle = "Mission Complete!";
+            ctx.fillStyle = "Black";
+            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 3, fontSize * 9 + 3);
+            ctx.fillStyle = "White";
+            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 9);
+
+            ctx.font = '40px "Press Start 2P"';
+            ctx.fillStyle = this.textColor == 2 ? "BlueViolet" : "Black";
+            ctx.fillText("Play Again", this.restartLevelBB.x, this.restartLevelBB.y);
+            ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
+            ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+
+            this.myScoreBoard.drawReportCard(ctx);
         } else {
             this.myScoreBoard.draw(ctx);
-
         }
 
         if (PARAMS.DEBUG) {
@@ -167,26 +206,38 @@ class SceneManager {
 
     };
 
+    /**
+     * Restarts game and keeps stats
+     */
+    restartGame() {
+        this.movePlayerToMiddle();
+        this.resetGame();
+        this.startGame();
+    }
+
+
+    /**
+     * starts the game and turns off title/transition
+     */
     startGame() {
         this.title = false;
         this.transition = false;
         this.spawnTargets(10);
+        ASSET_MANAGER.playAsset("./music/break_the_targets_melee.mp3");
         ASSET_MANAGER.playAsset(SFX.GO)
     }
 
 
-    //demo of entities for prototshowcase
+    /**
+     * Loads the game level
+     */
     loadLevel() {
         //ground
         let bg = new Background(this.game);
         let ground = new Ground(this.game, 0, this.game.surfaceHeight - PARAMS.BLOCKWIDTH + 10, this.game.surfaceWidth, PARAMS.BLOCKWIDTH, true);
-
         this.spawnTargets(this.numTargets);
-
-
         //add entities
         this.game.addEntity(ground);
-
         //background always last
         this.game.addEntity(bg);
     }
