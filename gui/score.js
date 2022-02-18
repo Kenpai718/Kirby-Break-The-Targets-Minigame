@@ -54,7 +54,7 @@ class ScoreBoard {
         this.myMaxCombo = 0;
         this.myWave = 0;
 
-        this.bonusMultiplier = 10;
+        this.myBonus = 10;
 
         this.myHighScore = 0; //save this
 
@@ -88,9 +88,9 @@ class ScoreBoard {
     }
 
     calculateBonus() {
-        this.myComboBonus = 10 * this.myMaxCombo;
-        this.myAccuracyBonus = Math.round(100 * this.myAccuracy / 100);
-        this.myWaveBonus = 10 * this.myWave;
+        this.myComboBonus = this.myBonus * this.myMaxCombo;
+        this.myAccuracyBonus = Math.round(this.myBonus * this.myAccuracy / 100);
+        this.myWaveBonus = this.myBonus * this.myWave;
 
         this.myPoints += (this.myComboBonus) + this.myAccuracyBonus + this.myWaveBonus;
     }
@@ -117,9 +117,9 @@ class ScoreBoard {
         let labels = [
             "REPORT CARD",
             "BONUSES: ",
-            "COMBOS:10*" + this.myMaxCombo + "= " + this.myComboBonus,
-            "WAVES:10*" + this.myWave + "= " + this.myWaveBonus,
-            "ACCURACY:10*" + (this.myAccuracy / 100).toFixed(2) + "= " + this.myAccuracyBonus,
+            "COMBOS:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
+            "WAVES:" + this.myWaveBonus + "*" + this.myBonus + " = " + this.myWaveBonus,
+            "ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + this.myBonus + " = " + this.myAccuracyBonus,
             "",
             "FINAL-RESULTS:",
             "TOTAL-POINTS        =" + this.myPoints,

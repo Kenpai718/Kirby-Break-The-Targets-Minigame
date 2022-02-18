@@ -1,5 +1,6 @@
 class SceneManager {
     constructor(game) {
+        this.version = "v1.0";
         this.game = game;
         this.game.camera = this; //add scene manager as an entity to game engine
 
@@ -202,10 +203,19 @@ class SceneManager {
             drawWithBorder(ctx, gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 1, fontSize * 3 + 1, "Orchid");
 
             ctx.font = '40px "Press Start 2P"';
+
+            ctx.fillStyle = "GhostWhite"
+            ctx.fillText("Start Game", this.startGameBB.x + 2, this.startGameBB.y + 2);
             ctx.fillStyle = this.textColor == 1 ? "DeepPink" : "Black";
             ctx.fillText("Start Game", this.startGameBB.x, this.startGameBB.y);
+
+            ctx.fillStyle = "GhostWhite"
+            ctx.fillText("Controls", this.controlsBB.x + 2, this.controlsBB.y + 2);
             ctx.fillStyle = this.textColor == 2 ? "BlueViolet" : "Black";
             ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
+
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText("Credits", this.creditsBB.x + 2, this.creditsBB.y + 2);
             ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
             ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
             ctx.strokeStyle = "Red";
@@ -218,18 +228,33 @@ class SceneManager {
                 this.myCreditBox.show = true;
                 this.myCreditBox.draw(ctx);
             }
+
+            //version number
+            ctx.font = '30px "Press Start 2P"';
+            let vX = this.game.surfaceWidth - getRightOffset(this.version, 30);
+            let vY = this.game.surfaceHeight - 10;
+            ctx.fillStyle = "Black";
+            ctx.fillText(this.version, vX + 2, vY + 2);
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText(this.version, vX, vY);
         } else if (this.transition) {
             var fontSize = 55;
             ctx.font = fontSize + 'px "Press Start 2P"';
             let gameTitle = "Mission Complete!";
             ctx.fillStyle = "Black";
             ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 3, fontSize * 3 + 3);
-            ctx.fillStyle = "White";
+            ctx.fillStyle = "GhostWhite";
             ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
 
             ctx.font = '40px "Press Start 2P"';
+
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText("Play Again", this.restartLevelBB.x + 2, this.restartLevelBB.y + 2);
             ctx.fillStyle = this.textColor == 2 ? "BlueViolet" : "Black";
             ctx.fillText("Play Again", this.restartLevelBB.x, this.restartLevelBB.y);
+
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText("Return To Menu", this.returnToMenuBB.x + 2, this.returnToMenuBB.y + 2);
             ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
             ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
 
