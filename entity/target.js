@@ -12,10 +12,14 @@ class Target {
 		this.scale = 0.3;
 		this.radius = 106 * this.scale;
 		this.hit = false;
+		this.myDirection = "none";
+		this.point = 1;
 
 
 		this.velocity = { x: 0, y: 0 };
-		this.setDirAndSpeed(); //set initial direction and speed
+		//to make it easier to identify index of animation array
+		this.colorType = { blue: 0, green: 1, yellow: 2, orange: 3, red: 4 };
+
 		this.color = Math.floor(Math.random() * 5);
 
 		this.animations = [];
@@ -25,26 +29,87 @@ class Target {
 		this.animations.push(new Animator(this.spritesheet, 745, 0, 230, 230, 1, 1, 0, false, true)); //orange = 3
 		this.animations.push(new Animator(this.spritesheet, 980, 0, 230, 230, 1, 1, 0, false, true)); //red = 4
 
+		this.setBehavior();
 	};
 
+	setBehavior() {
+		switch (this.color) {
+			case this.colorType.red:
+				this.setSpeeds(0, 2);
+				this.point = 1;
+				break;
+			case this.colorType.orange:
+				this.setSpeeds(2, 4);
+				this.point = 2;
+				break;
+			case this.colorType.yellow:
+				this.setSpeeds(4, 6);
+				this.point = 3;
+				break;
+			case this.colorType.green:
+				this.setSpeeds(6, 8);
+				this.point = 4;
+				break;
+			case this.colorType.blue:
+				this.setSpeeds(8, 10);
+				this.point = 5;
+				break;
+		}
+
+		this.setDirAndSpeed(); //set initial direction and speed
+	}
+
+	setSpeeds(theMin, theMax) {
+		this.myMinSpd = theMin;
+		this.myMaxSpd = theMax;
+	}
+
+	getPoint() {
+		return this.point;
+	}
+
 	setDirAndSpeed() {
-		this.behavior = Math.floor(Math.random() * 4); //0 = left, 1 = right, 2 = up, 3 = down
-		this.speed = Math.floor(Math.random() * (10 - 1) + 1); //in range is (max - min) *min
+		this.behavior = randomInt(4); //0 = left, 1 = right, 2 = up, 3 = down
+		this.speed = Math.floor(Math.random() * (this.myMaxSpd - this.myMinSpd) + 1); //in range is (max - min) *min
 		switch (this.behavior) {
 			case (0):
+				this.direction = "left";
 				this.velocity.x = -this.speed;
 				break;
 			case (1):
+				this.direction = "right";
 				this.velocity.x = this.speed;
 				break;
 			case (2):
+				this.direction = "up";
 				this.velocity.y = -this.speed;
 				break;
 			case (3):
+				this.direction = "down";
 				this.velocity.y = -this.speed;
 				break;
 		}
 
+	}
+
+	getColor() {
+		let color = "red";
+		switch (this.color) {
+			case this.colorType.orange:
+				color = "orange";
+				break;
+			case this.colorType.yellow:
+				color = "yellow";
+				break;
+			case this.colorType.green:
+				color = "springgreen";
+				break;
+			case this.colorType.blue:
+				color = "aquamarine";
+				break;
+		}
+
+		return color;
 	}
 
 	update() {
@@ -52,49 +117,43 @@ class Target {
 		const TICK = this.game.clockTick;
 		const MAX_SPD = 300;
 
-		// bottom bound / floor
-		if (this.y + this.radius >= this.game.surfaceHeight) {
-			this.velocity.y = -this.velocity.y;
-			this.y = this.game.surfaceHeight - this.radius;
-		}
-		// top bound / ceiling
-		if (this.y - this.radius <= 0) {
-			this.velocity.y = -this.velocity.y;
-			this.y = this.radius;
-		}
-
-		// left bound
-		if (this.x - this.radius <= 0) {
-			this.velocity.x = -this.velocity.x;
-			this.x = this.radius;
-		}
-		// right bound
-		if (this.x + this.radius >= this.game.surfaceWidth) {
-			this.velocity.x = -this.velocity.x;
-			this.x = this.game.surfaceWidth - this.radius;
-		}
+		this.checkIfReverse();
 
 		this.x += this.velocity.x;
 		this.y += this.velocity.y;
 
 	};
 
-	reverse() {
-		let bounce = this.radius * 2;
-		if (this.behavior == 0) { //left out
-			this.x += bounce;
-			this.behavior = 1;
-		} else if (this.behavior == 1) { //right
-			this.x -= bounce;
-			this.behavior = 0;
-		} else if (this.behavior == 2) { //up
-			this.y += bounce;
-			this.behavior = 3;
-		} else { //down
-			this.y -= bounce;
-			this.behavior = 2;
+	/**
+	 * Hit edge reverse direction
+	 */
+	checkIfReverse() {
+		// bottom bound / floor
+		if (this.y + this.radius >= this.game.surfaceHeight) {
+			this.velocity.y = -this.velocity.y;
+			this.y = this.game.surfaceHeight - this.radius;
+			this.direction = "up";
 		}
-	};
+		// top bound / ceiling
+		if (this.y - this.radius <= 0) {
+			this.velocity.y = -this.velocity.y;
+			this.y = this.radius;
+			this.direction = "down";
+		}
+
+		// left bound
+		if (this.x - this.radius <= 0) {
+			this.velocity.x = -this.velocity.x;
+			this.x = this.radius;
+			this.direction = "right";
+		}
+		// right bound
+		if (this.x + this.radius >= this.game.surfaceWidth) {
+			this.velocity.x = -this.velocity.x;
+			this.x = this.game.surfaceWidth - this.radius;
+			this.direction = "left";
+		}
+	}
 
 
 	draw(ctx) {
@@ -115,31 +174,16 @@ class Target {
 			ctx.stroke();
 
 			//debug text
-			let xy = ("(" + this.x + ", " + this.y + ")");
-			ctx.fillText(xy, this.x + this.radius, this.y + this.radius);
-			ctx.fillText("Speed: " + this.speed, this.x + this.radius, this.y + this.radius + 10);
-			ctx.fillText("Hit: " + this.hit, this.x + this.radius, this.y + this.radius + 20);
-			
+			ctx.font = "25px Arial";
+			ctx.fillStyle = "red";
+			let xy = ("(" + Math.round(this.x) + ", " + Math.round(this.y) + ")");
+			let fSize = 25;
+			ctx.fillText("Type: " + this.color + ", " + this.direction, this.x + this.radius + 5, this.y);
+			ctx.fillText(xy, this.x + this.radius + 5, this.y + fSize);
+			ctx.fillText("Speed: " + this.speed, this.x + this.radius + 5, this.y + fSize * 2);
 		}
 
 	};
-
-	// collide(A, B) {
-
-	// 	console.log("called here");
-
-	// 	let Ax = A.x;
-	// 	let Ay = A.y;
-	// 	let Bx = B.x;
-	// 	let By = B.y;
-
-	// 	//correction offset
-	// 	if(A instanceof Target) Ax += A.radius; Ay += A.radius;
-	// 	if(B instanceof Target) Bx += B.radius; By += B.radius;
-
-	// 	let dist = Math.sqrt((Bx - Ax) * (Bx - Ax) + (By - Ay)*(By - Ay));
-	// 	return (dist < A.radius + B.radius);
-	// };
 
 
 }

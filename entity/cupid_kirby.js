@@ -227,23 +227,27 @@ class CupidKirby {
 				this.game.jump = false;
 				//console.log("flight mode off falling");
 			}
-
-
-
-
 		}
 
 		//attack
 		if (this.game.attack) {
 
-			if (this.inAir) { //crouch attack
+			if (this.inAir) { //air shot
 				this.action = this.states.air_shoot
 			} else { //regular attack
 				this.action = this.states.ground_shoot;
 			}
 
+			//flip the direction if clicking in other direction
+			if(this.animations[this.facing][this.action].currentFrame() >= 4) {
+				let x = this.game.mouse.x;
+				if (x < this.x + this.width / 2)
+					this.facing = this.dir.left;
+				if (x > this.x + this.width / 2)
+					this.facing = this.dir.right;
+			}
+
 			let done = this.animations[this.facing][this.action].isDone();
-			//console.log(this.action + " " + this.game.comboCounter + " " + this.combo);
 
 			if (done) {
 				this.action = this.DEFAULT_ACTION;
@@ -293,12 +297,18 @@ class CupidKirby {
 			this.x = this.x;
 		}
 
+		this.handleCollisions();
+
+
+
+	};
+
+	handleCollisions() {
 		//do collisions detection here
 		let that = this;
 		this.game.entities.forEach(function (entity) {
 
 			//buffers for collision placement
-			let groundBuffer = 100;
 			let bonkBuffer = 15;
 			if (entity.BB && that.BB.collide(entity.BB)) {
 				if (that.velocity.y > 0) { // falling
@@ -320,8 +330,6 @@ class CupidKirby {
 
 					that.resetAnimationTimers(that.states.jump);
 					that.resetAnimationTimers(that.states.falling);
-
-					that.velocity.y === 0;
 					that.updateBB();
 				}
 
@@ -341,10 +349,7 @@ class CupidKirby {
 
 
 		});
-
-
-
-	};
+	}
 
 	//reset the animation timer in both direction
 	resetAnimationTimers(action) {

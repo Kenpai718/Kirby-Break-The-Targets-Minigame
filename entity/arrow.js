@@ -24,6 +24,9 @@ class Arrow {
         this.scale = 3;
         
         this.elapsedTime = 0;
+
+        this.myCombo = 0;
+        this.scoreBoard = this.game.myScoreBoard;
     };
 
     drawAngle(ctx, angle) {
@@ -64,23 +67,39 @@ class Arrow {
 
         this.facing = getFacing(this.velocity);
 
+        //handles hitting a target and updating the score
         for (var i = 0; i < this.game.entities.length; i++) {
             var ent = this.game.entities[i];
             if (ent instanceof Target && collide(this, ent)) {
                 if(!ent.hit) {
-                    this.game.numHit++;
-                    ent.hit = true;
+                    ent.hit = true; //so target cant be hit multiple times
                     ent.removeFromWorld = true;
-
-                    //play hit sound
                     ASSET_MANAGER.playAsset("./sound/hitsound.wav");
-                //console.log("hit");
+                    this.game.addEntityToFront(new Score(this.game, ent, ent.getPoint()));
+
+                    this.updateTargetScore(ent);
+                    
                 }
             }
         }
 
-
+        this.checkDespawn();
     };
+
+    updateTargetScore(theTarget) {
+        this.scoreBoard.myNumHit++;
+        this.scoreBoard.myPoints += (theTarget.getPoint())
+        this.myCombo++;
+    
+    }
+
+    checkDespawn() {
+        if(this.x < -30 || this.x > this.game.surfaceWidth + 500 || this.y < -30 || this.y > this.game.surfaceHeight + 500) {
+            this.removeFromWorld = true;
+            //add max combo to scoreboard
+            this.scoreBoard.myMaxCombo = Math.max(this.myCombo, this.scoreBoard.myMaxCombo);
+        }
+    }
 
     draw(ctx) {
         var xOffset = 16 * this.scale;

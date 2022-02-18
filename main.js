@@ -15,6 +15,7 @@ ASSET_MANAGER.queueDownload("./sprites/environment/backgrounds2.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/hills.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/kirby_tileset.png");
+ASSET_MANAGER.queueDownload("./sprites/environment/ground_tiles.png");
 
 
 //music
@@ -33,15 +34,7 @@ ASSET_MANAGER.downloadAll(() => {
 
 	//auto replay music
 	ASSET_MANAGER.autoRepeat("./music/break_the_targets_melee.mp3");
-
-	//force play music to bypass browser policy
-	//should make a title screen instead later
-	const autoPlayID = setInterval(() => {
-        audio.play()
-            .then(() => clearInterval(autoPlayID))
-            .catch(console.error);
-    }, 500);
-
+	ASSET_MANAGER.forcePlayMusic("./music/break_the_targets_melee.mp3");
 
 	gameEngine.init(ctx);
 	new SceneManager(gameEngine);

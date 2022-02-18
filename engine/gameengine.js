@@ -24,8 +24,7 @@ class GameEngine {
         this.attack = null;
 
         //stats
-        this.numHit = 0;
-        this.numFired = 0;
+        this.myScoreBoard = new ScoreBoard(this);
 
         // this.keys = {};
 
@@ -95,7 +94,7 @@ class GameEngine {
                 case 1:
                     //alert('Left Mouse button pressed.');
                     that.attack = true;
-                    that.numFired++;
+                    that.myScoreBoard.myNumShots++;
                     break;
                 case 2:
                     //alert('Middle Mouse button pressed.');

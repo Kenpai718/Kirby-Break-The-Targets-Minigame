@@ -4,21 +4,26 @@
 <head>
     <meta charset="utf-8">
     <title>(WIP) Kirby: Target Practice</title>
-    <script type="text/javascript" src="./assetmanager.js"></script>
-    <script type="text/javascript" src="./timer.js"></script>
-    <script type="text/javascript" src="./gameengine.js"></script>
-    <script type="text/javascript" src="./util.js"></script>
-    <script type="text/javascript" src="./animator.js"></script>
-    <script type="text/javascript" src="./background.js"></script>
-    <script type="text/javascript" src="./boundingbox.js"></script>
-    <script type="text/javascript" src="./bronto.js"></script>
-    <script type="text/javascript" src="./cupid_kirby.js"></script>
-    <script type="text/javascript" src="./arrow.js"></script>
-    <script type="text/javascript" src="./target.js"></script>
-    <script type="text/javascript" src="./kirby.js"></script>
-    <script type="text/javascript" src="./ground.js"></script>
-    <script type="text/javascript" src="./scenemanager.js"></script>
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Press+Start+2P">
+    <script type="text/javascript" src="./engine/assetmanager.js"></script>
+    <script type="text/javascript" src="./engine/timer.js"></script>
+    <script type="text/javascript" src="./engine/gameengine.js"></script>
+    <script type="text/javascript" src="./engine/animator.js"></script>
+    <script type="text/javascript" src="./engine/boundingbox.js"></script>
+    <script type="text/javascript" src="./engine/scenemanager.js"></script>
+    <script type="text/javascript" src="./gui/score.js"></script>
+
+    <script type="text/javascript" src="./entity/bronto.js"></script>
+    <script type="text/javascript" src="./entity/cupid_kirby.js"></script>
+    <script type="text/javascript" src="./entity/arrow.js"></script>
+    <script type="text/javascript" src="./entity/target.js"></script>
+    <script type="text/javascript" src="./entity/kirby.js"></script>
+    <script type="text/javascript" src="./entity/ground.js"></script>
+    <script type="text/javascript" src="./entity/background.js"></script>
+
     <script type="text/javascript" src="./main.js"></script>
+    <script type="text/javascript" src="./util.js"></script>
 </head>
 
 <body>
@@ -42,6 +47,7 @@
             <br>&nbsp;&nbsp; Press Space again to cancel flight mode and fastfall.
         </li>
         <li><b>(Click/Move mouse)</b> to aim and shoot</li>
+        <li><b>The arrow will fly in the direction of your cursor after the shooting animation finishes.</li>
         <p></p>
         <b>OBJECTIVE:</b>
         <li>Attack and break as many targets in a time limit and aim for a high score!</li>

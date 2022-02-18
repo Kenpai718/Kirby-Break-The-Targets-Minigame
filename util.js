@@ -1,7 +1,11 @@
 /** Global Parameters Object */
+const DEFAULT_FONT_SIZE = 10;
 const PARAMS = {
     DEBUG: false,
-    BLOCKWIDTH: 128
+    BLOCKWIDTH: 64,
+    //GUI
+    BIG_FONT: (DEFAULT_FONT_SIZE * 5) + 'px "Press Start 2P"',       //font used for big moments like damage numbers
+    DEFAULT_FONT: DEFAULT_FONT_SIZE + 'px "Press Start 2P"',    //regular font
 };
 
 function getFacing(velocity) {
@@ -19,7 +23,7 @@ function getFacing(velocity) {
 };
 
 function distance(A, B) {
-    return Math.sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y)*(B.y - A.y));
+    return Math.sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
 };
 
 function collide(A, B) {
@@ -33,7 +37,7 @@ const {
 } = Math
 
 /** Easy access to logging :) (Python syntax XD) */
-const {log: print} = console
+const { log: print } = console
 
 /**
  * @param {Number} n
@@ -128,3 +132,11 @@ const getDistance = (x1, y1, x2, y2) => {
 const chooseRandom = items => items.length > 0
     ? items[floor(random() * items.length)]
     : null;
+
+/**
+* if drawing text on the right this will give the proper offset
+* so all the text is shown and not cut off by the canvas
+*/
+function getRightOffset(theText, fontSize) {
+    return (theText.length) * (fontSize) + 10;
+}

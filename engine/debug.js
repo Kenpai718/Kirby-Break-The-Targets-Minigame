@@ -10,48 +10,54 @@ class Debug {
 	};
 
 	draw(ctx) {
+		//keyboard input
 
-		let xV = "xV=" + Math.floor(this.game.kirby.x);
-		let yV = "yV=" + Math.floor(this.game.kirby.y);
-		ctx.fillText(xV, 1.5 * PARAMS.BLOCKWIDTH, 2.5 * PARAMS.BLOCKWIDTH);
-		ctx.fillText(yV, 1.5 * PARAMS.BLOCKWIDTH, 3 * PARAMS.BLOCKWIDTH);
+		ctx.font = PARAMS.DEFAULT_FONT;
 
-		ctx.translate(0, -10); // hack to move elements up by 10 pixels instead of adding -10 to all y coordinates below
-		ctx.strokeStyle = "White";
+		// left debug
 		ctx.lineWidth = 2;
-		ctx.strokeStyle = this.game.left ? "White" : "Grey";
+		ctx.strokeStyle = this.game.left ? "Red" : "SpringGreen";
 		ctx.fillStyle = ctx.strokeStyle;
-		ctx.strokeRect(6 * PARAMS.BLOCKWIDTH - 2, 2.5 * PARAMS.BLOCKWIDTH - 2, 0.5 * PARAMS.BLOCKWIDTH + 2, 0.5 * PARAMS.BLOCKWIDTH + 2);
-		ctx.fillText("L", 6 * PARAMS.BLOCKWIDTH, 3 * PARAMS.BLOCKWIDTH);
-		ctx.strokeStyle = this.game.down ? "White" : "Grey";
-		ctx.fillStyle = ctx.strokeStyle;
-		ctx.strokeRect(6.5 * PARAMS.BLOCKWIDTH, 3 * PARAMS.BLOCKWIDTH, 0.5 * PARAMS.BLOCKWIDTH + 2, 0.5 * PARAMS.BLOCKWIDTH + 2);
-		ctx.fillText("D", 6.5 * PARAMS.BLOCKWIDTH + 2, 3.5 * PARAMS.BLOCKWIDTH + 2);
-		ctx.strokeStyle = this.game.up ? "White" : "Grey";
-		ctx.fillStyle = ctx.strokeStyle;
-		ctx.strokeRect(6.5 * PARAMS.BLOCKWIDTH, 2 * PARAMS.BLOCKWIDTH - 4, 0.5 * PARAMS.BLOCKWIDTH + 2, 0.5 * PARAMS.BLOCKWIDTH + 2);
-		ctx.fillText("U", 6.5 * PARAMS.BLOCKWIDTH + 2, 2.5 * PARAMS.BLOCKWIDTH - 2);
-		ctx.strokeStyle = this.game.right ? "White" : "Grey";
-		ctx.fillStyle = ctx.strokeStyle;
-		ctx.strokeRect(7 * PARAMS.BLOCKWIDTH + 2, 2.5 * PARAMS.BLOCKWIDTH - 2, 0.5 * PARAMS.BLOCKWIDTH + 2, 0.5 * PARAMS.BLOCKWIDTH + 2);
-		ctx.fillText("R", 7 * PARAMS.BLOCKWIDTH + 4, 3 * PARAMS.BLOCKWIDTH);
+		ctx.strokeRect(10, this.game.surfaceHeight - 40, 30, 30);
+		ctx.fillText("A", 20, this.game.surfaceHeight - 20);
 
-		ctx.strokeStyle = this.game.A ? "White" : "Grey";
+		// down debug
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = this.game.down ? "Red" : "SpringGreen";
 		ctx.fillStyle = ctx.strokeStyle;
-		ctx.beginPath();
-		ctx.arc(8.25 * PARAMS.BLOCKWIDTH + 2, 2.75 * PARAMS.BLOCKWIDTH, 0.25 * PARAMS.BLOCKWIDTH + 4, 0, 2 * Math.PI);
-		ctx.stroke();
-		ctx.fillText("A", 8 * PARAMS.BLOCKWIDTH + 4, 3 * PARAMS.BLOCKWIDTH);
-		ctx.strokeStyle = this.game.B ? "White" : "Grey";
-		ctx.fillStyle = ctx.strokeStyle;
-		ctx.beginPath();
-		ctx.arc(9 * PARAMS.BLOCKWIDTH + 2, 2.75 * PARAMS.BLOCKWIDTH, 0.25 * PARAMS.BLOCKWIDTH + 4, 0, 2 * Math.PI);
-		ctx.stroke();
-		ctx.fillText("B", 8.75 * PARAMS.BLOCKWIDTH + 4, 3 * PARAMS.BLOCKWIDTH);
+		ctx.strokeRect(50, this.game.surfaceHeight - 40, 30, 30);
+		ctx.fillText("S", 60, this.game.surfaceHeight - 20);
 
-		ctx.translate(0, 10);
-		ctx.strokeStyle = "White";
+		// up debug
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = this.game.up ? "Red" : "SpringGreen";
 		ctx.fillStyle = ctx.strokeStyle;
+		ctx.strokeRect(50, this.game.surfaceHeight - 80, 30, 30);
+		ctx.fillText("W", 60, this.game.surfaceHeight - 60);
 
-	};
+		// right debug
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = this.game.right ? "Red" : "SpringGreen";
+		ctx.fillStyle = ctx.strokeStyle;
+		ctx.strokeRect(90, this.game.surfaceHeight - 40, 30, 30);
+		ctx.fillText("D", 100, this.game.surfaceHeight - 20);
+
+		// jump debug
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = this.game.jump ? "Red" : "SpringGreen";
+		ctx.fillStyle = ctx.strokeStyle;
+		ctx.strokeRect(130, this.game.surfaceHeight - 40, 75, 30);
+		ctx.fillText("SPACE", 140, this.game.surfaceHeight - 20);
+
+		// shoot debug
+
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = this.game.attack ? "Red" : "SpringGreen";
+		ctx.fillStyle = ctx.strokeStyle;
+		ctx.strokeRect(270, this.game.surfaceHeight - 40, 60, 30);
+		ctx.fillText("Shoot", 275, this.game.surfaceHeight - 20);
+
+
+
+	}
 }

@@ -4,13 +4,13 @@ class Ground {
     //w, h = dimensions to draw image
     constructor(game, x, y, w, h, visible) {
         Object.assign(this, { game, x, y, w, h, visible});
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/kirby_tileset.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/ground_tiles.png");
 
         //cordinates of the "castle" ground tile on spritesheet
-        this.srcX = 41;
-        this.srcY = 8;
-        this.srcWidth = 23;
-        this.srcHeight = 19;
+        this.srcX = 64;
+        this.srcY = 0;
+        this.srcWidth = 64;
+        this.srcHeight = 64;
 
         this.scale = PARAMS.BLOCKWIDTH;
 
@@ -45,13 +45,13 @@ class Platform {
     //w, h = dimensions to draw image
     constructor(game, x, y, w, h) {
         Object.assign(this, { game, x, y, w, h });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/ground_tileset.png");
 
         //cordinates of the "castle" platform tile on spritesheet
-        this.srcX = 144;
-        this.srcY = 32;
-        this.srcWidth = 16;
-        this.srcHeight = 13;
+        this.srcX = 64;
+        this.srcY = 0;
+        this.srcWidth = 64;
+        this.srcHeight = 64;
 
         this.scale = PARAMS.BLOCKWIDTH;
 
