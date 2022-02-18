@@ -67,7 +67,6 @@ class SceneTextBox {
             this.drawTextBox(ctx, this.text);
             this.doFade = true;
             this.myOpacity = 100;
-            console.log("drawing textbox");
         }
 
         //no longer showing start doing a fade out

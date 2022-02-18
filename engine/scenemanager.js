@@ -14,10 +14,7 @@ class SceneManager {
         this.myTimer = DEFAULT_GAME_TIMER;
         this.mySpawnTargets = 10; //increase with each wave
 
-        //testing goblin animations
-        //this.test = new Skeleton(this.game, 400, 927)
-        //this.game.addEntity(this.test);
-
+        this.mySign = new Sign(this.game);
         //main character
         this.player = new CupidKirby(this.game, (this.game.surfaceWidth / 2) - 50, 0);
         this.game.addEntity(this.player);
@@ -27,13 +24,6 @@ class SceneManager {
         //this.loadLevel1();
         this.loadLevel();
     };
-
-    resetGame() {
-        this.myScoreBoard.reset();
-        this.numTargets = 0;
-        this.myTimer = DEFAULT_GAME_TIMER;
-        this.mySpawnTargets = 10;
-    }
 
     movePlayerToMiddle() {
         this.player.x = 462;
@@ -82,6 +72,8 @@ class SceneManager {
         let controlY = this.game.surfaceHeight + 300;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
+
+        this.mySign.reset();
     }
 
     /**
@@ -99,6 +91,8 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
         y = (this.game.surfaceHeight / 3) + 75;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
+
+        this.mySign.reset();
     };
 
 
@@ -171,7 +165,6 @@ class SceneManager {
                 }
                 this.game.click = null;
             }
-
             this.myScoreBoard.update();
         } else { //game is playing
             this.myTimer -= this.game.clockTick;
@@ -238,28 +231,33 @@ class SceneManager {
             ctx.fillStyle = "GhostWhite";
             ctx.fillText(this.version, vX, vY);
         } else if (this.transition) {
-            var fontSize = 55;
-            ctx.font = fontSize + 'px "Press Start 2P"';
-            let gameTitle = "Mission Complete!";
-            ctx.fillStyle = "Black";
-            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 3, fontSize * 3 + 3);
-            ctx.fillStyle = "GhostWhite";
-            ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            if (this.mySign.isFinished()) {
+                var fontSize = 55;
+                ctx.font = fontSize + 'px "Press Start 2P"';
+                let gameTitle = "Mission Complete!";
+                ctx.fillStyle = "Black";
+                ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 3, fontSize * 3 + 3);
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText("Mission Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
 
-            ctx.font = '40px "Press Start 2P"';
+                ctx.font = '40px "Press Start 2P"';
 
-            ctx.fillStyle = "GhostWhite";
-            ctx.fillText("Play Again", this.restartLevelBB.x + 2, this.restartLevelBB.y + 2);
-            ctx.fillStyle = this.textColor == 2 ? "BlueViolet" : "Black";
-            ctx.fillText("Play Again", this.restartLevelBB.x, this.restartLevelBB.y);
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText("Play Again", this.restartLevelBB.x + 2, this.restartLevelBB.y + 2);
+                ctx.fillStyle = this.textColor == 2 ? "BlueViolet" : "Black";
+                ctx.fillText("Play Again", this.restartLevelBB.x, this.restartLevelBB.y);
 
-            ctx.fillStyle = "GhostWhite";
-            ctx.fillText("Return To Menu", this.returnToMenuBB.x + 2, this.returnToMenuBB.y + 2);
-            ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
-            ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText("Return To Menu", this.returnToMenuBB.x + 2, this.returnToMenuBB.y + 2);
+                ctx.fillStyle = this.textColor == 3 ? "BlueViolet" : "Black";
+                ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
 
-            this.myScoreBoard.drawReportCard(ctx);
+                this.myScoreBoard.drawReportCard(ctx);
+            } else {
+                this.mySign.draw(ctx, 1);
+            }
         } else {
+            this.mySign.draw(ctx, 0);
             this.myScoreBoard.draw(ctx);
         }
 
@@ -290,6 +288,14 @@ class SceneManager {
         this.startGame();
     }
 
+    resetGame() {
+        this.myScoreBoard.reset();
+        this.mySign.reset();
+        this.numTargets = 0;
+        this.myTimer = DEFAULT_GAME_TIMER;
+        this.mySpawnTargets = 10;
+    }
+
 
     /**
      * starts the game and turns off title/transition
@@ -297,6 +303,7 @@ class SceneManager {
     startGame() {
         this.title = false;
         this.transition = false;
+        this.mySign.reset();
         this.spawnTargets(10);
         ASSET_MANAGER.playAsset("./music/break_the_targets_melee.mp3");
         ASSET_MANAGER.playAsset(SFX.GO)

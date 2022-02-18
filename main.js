@@ -17,6 +17,10 @@ ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/kirby_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/ground_tiles.png");
 
+//gui
+ASSET_MANAGER.queueDownload("./sprites/go.png");
+ASSET_MANAGER.queueDownload("./sprites/complete.png");
+
 
 //music
 ASSET_MANAGER.queueDownload("./music/break_the_targets_melee.mp3");

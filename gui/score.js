@@ -52,7 +52,7 @@ class ScoreBoard {
         this.myAccuracy = 0;
         this.myPoints = 0;
         this.myMaxCombo = 0;
-        this.myWave = 0;
+        this.myWave = 1;
 
         this.myBonus = 10;
 
@@ -75,7 +75,7 @@ class ScoreBoard {
         this.myAccuracy = 0;
         this.myPoints = 0;
         this.myMaxCombo = 0;
-        this.myWave = 0;
+        this.myWave = 1;
         this.elapsed = 0;
     }
 
@@ -118,7 +118,7 @@ class ScoreBoard {
             "REPORT CARD",
             "BONUSES: ",
             "COMBOS:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
-            "WAVES:" + this.myWaveBonus + "*" + this.myBonus + " = " + this.myWaveBonus,
+            "WAVES:" + this.myWave + "*" + this.myBonus + " = " + this.myWaveBonus,
             "ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + this.myBonus + " = " + this.myAccuracyBonus,
             "",
             "FINAL-RESULTS:",

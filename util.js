@@ -19,7 +19,7 @@ const SFX = {
     WOW: "./sound/incredible.mp3",
     CLICK: "./sound/click.wav",
     GO: "./sound/go.mp3",
-    GAME: "./sound/game.mp3",
+    GAME: "./sound/complete.mp3",
 }
 
 function getFacing(velocity) {
