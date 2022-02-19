@@ -14,6 +14,7 @@ class Target {
 		this.hit = false;
 		this.myDirection = "none";
 		this.point = 1;
+		this.speedScalar = 100; //increase the set speeds
 
 
 		this.velocity = { x: 0, y: 0 };
@@ -34,23 +35,23 @@ class Target {
 
 	setBehavior() {
 		switch (this.color) {
-			case this.colorType.red:
-				this.setSpeeds(0, 2);
+			case this.colorType.red: //stays still
+				this.setSpeeds(0, 0);
 				this.point = 1;
 				break;
-			case this.colorType.orange:
-				this.setSpeeds(2, 4);
+			case this.colorType.orange: //slow speed
+				this.setSpeeds(1, 4);
 				this.point = 2;
 				break;
-			case this.colorType.yellow:
+			case this.colorType.yellow: //medium speed
 				this.setSpeeds(4, 7);
 				this.point = 3;
 				break;
-			case this.colorType.green:
+			case this.colorType.green: //fast speed
 				this.setSpeeds(7, 10);
 				this.point = 4;
 				break;
-			case this.colorType.blue:
+			case this.colorType.blue: //very fast
 				this.setSpeeds(9, 13);
 				this.point = 5;
 				break;
@@ -105,7 +106,7 @@ class Target {
 				color = "springgreen";
 				break;
 			case this.colorType.blue:
-				color = "aquamarine";
+				color = "aqua";
 				break;
 		}
 
@@ -119,8 +120,8 @@ class Target {
 
 		this.checkIfReverse();
 
-		this.x += this.velocity.x;
-		this.y += this.velocity.y;
+		this.x += (this.velocity.x * this.speedScalar) * TICK;
+		this.y += (this.velocity.y * this.speedScalar) * TICK;
 
 	};
 
