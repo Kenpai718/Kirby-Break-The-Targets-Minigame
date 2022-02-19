@@ -129,15 +129,15 @@ class ScoreBoard {
 
         let maxCombo = "MAX COMBO:" + this.myMaxCombo + "*" + this.myBonus + " = ";
         let labels = [
-            "REPORT CARD: " + this.myLastPoints + "pts",
-            "BONUSES: ",
-            "TARGETS HIT:" + this.myNumHit + "*" + 10 + " = " + this.myTargetBonus,
-            "WAVES:" + this.myWave + "*" + this.myBonus + " = " + this.myWaveBonus,
+            "[REPORT CARD: " + this.myLastPoints + "pts]",
+            "BONUSES! ",
+            "#TARGETS HIT:" + this.myNumHit + "*" + 10 + " = " + this.myTargetBonus,
+            "#WAVES:" + this.myWave + "*" + this.myBonus + " = " + this.myWaveBonus,
             "MAX COMBO:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
             "YOUR ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 100 + " = " + this.myAccuracyBonus,
             "",
-            "FINAL-RESULTS:",
-            "TOTAL-POINTS        =" + this.myPoints + "pts",
+            "[FINAL RESULTS]:",
+            "TOTAL-POINTS+BONUS  =" + this.myPoints + "pts",
             "PREVIOUS HIGH-SCORE =" + this.myHighScore + "pts",
             "",
             finalMsg
