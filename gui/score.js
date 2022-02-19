@@ -2,8 +2,8 @@
  * Damage/healing score
  */
 class Score {
-    constructor(game, entity, score) {
-        Object.assign(this, { game, entity, score });
+    constructor(game, entity, score, isBonus, comboCounter) {
+        Object.assign(this, { game, entity, score, isBonus, comboCounter});
 
         this.x = entity.x;
         this.y = entity.y - 30;
@@ -27,14 +27,24 @@ class Score {
         //fade out
         ctx.filter = "opacity(" + this.myOpacity + "%)";
 
-        let fontSize = (15 * this.score);
-        if (fontSize > 50) fontSize = 50;
-        ctx.font = fontSize + 'px "Press Start 2P"'
-
-        ctx.fillStyle = "Black";
-        ctx.fillText(this.score, (this.x - 1), this.y + 1);
-        ctx.fillStyle = this.entity.getColor();
-        ctx.fillText(this.score, this.x, this.y);
+        if(this.isBonus) {
+            let fontSize = 20;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            ctx.fillStyle = "Black";
+            let comboMsg = this.comboCounter + "xCOMBO: +" + this.score;
+            let offset = (comboMsg.length * fontSize) / 3;
+            ctx.fillText(comboMsg, this.x - offset + 1, this.y + 1);
+            ctx.fillStyle = "DeepPink";
+            ctx.fillText(comboMsg, this.x - offset, this.y);
+        } else {
+            let fontSize = (15 * this.score);
+            if (fontSize > 50) fontSize = 50;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            ctx.fillStyle = "Black";
+            ctx.fillText(this.score, (this.x - 1), this.y + 1);
+            if(this.entity instanceof Target) ctx.fillStyle = this.entity.getColor();
+            ctx.fillText(this.score, this.x, this.y);
+        }
         ctx.filter = "none";
     };
 };
@@ -54,15 +64,15 @@ class ScoreBoard {
         this.myMaxCombo = 0;
         this.myWave = 1;
 
-        this.myBonus = 10;
+        this.myBonus = 100;
 
         this.myHighScore = 0; //save this
 
         this.elapsed = 0;
         this.playCongrats = false;
 
-        let boxX = 450;
-        let boxY = 1020;
+        let boxX = 400;
+        let boxY = 1100;
         this.myReportBox = new SceneTextBox(this.game, boxX, boxY, "");
     }
 
@@ -91,8 +101,10 @@ class ScoreBoard {
         this.myComboBonus = this.myBonus * this.myMaxCombo;
         this.myAccuracyBonus = Math.round(100 * this.myAccuracy / 100);
         this.myWaveBonus = this.myBonus * this.myWave;
+        this.myTargetBonus = 10 * this.myNumHit;
 
-        this.myPoints += (this.myComboBonus) + this.myAccuracyBonus + this.myWaveBonus;
+        this.myLastPoints = this.myPoints;
+        this.myPoints += (this.myComboBonus) + this.myAccuracyBonus + this.myWaveBonus + this.myTargetBonus;
     }
 
     update() {
@@ -100,7 +112,7 @@ class ScoreBoard {
             this.myAccuracy = ((this.myNumHit / this.myNumShots) * 100).toFixed(2);
         } else if (this.game.camera.transition) {
             this.elapsed += this.game.clockTick;
-            if(this.gotNewHighScore() && (this.elapsed > 1.5) && !this.playCongrats) {
+            if (this.gotNewHighScore() && (this.elapsed > 1.5) && !this.playCongrats) {
                 this.playCongrats = true;
                 ASSET_MANAGER.playAsset(SFX.RECORD);
             }
@@ -114,16 +126,19 @@ class ScoreBoard {
     drawReportCard(ctx) {
         let fontSize = 40;
         let finalMsg = (this.myPoints > this.myHighScore) ? "NEW HIGH SCORE!" : "No new record...";
+
+        let maxCombo = "MAX COMBO:" + this.myMaxCombo + "*" + this.myBonus + " = ";
         let labels = [
-            "REPORT CARD",
+            "REPORT CARD: " + this.myLastPoints + "pts",
             "BONUSES: ",
-            "COMBOS:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
+            "TARGETS HIT:" + this.myNumHit + "*" + 10 + " = " + this.myTargetBonus,
             "WAVES:" + this.myWave + "*" + this.myBonus + " = " + this.myWaveBonus,
-            "ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 100 + " = " + this.myAccuracyBonus,
+            "MAX COMBO:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
+            "YOUR ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 100 + " = " + this.myAccuracyBonus,
             "",
             "FINAL-RESULTS:",
-            "TOTAL-POINTS        =" + this.myPoints,
-            "PREVIOUS HIGH-SCORE =" + this.myHighScore,
+            "TOTAL-POINTS        =" + this.myPoints + "pts",
+            "PREVIOUS HIGH-SCORE =" + this.myHighScore + "pts",
             "",
             finalMsg
         ]

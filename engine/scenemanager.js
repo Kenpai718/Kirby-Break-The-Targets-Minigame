@@ -25,11 +25,6 @@ class SceneManager {
         this.loadLevel();
     };
 
-    movePlayerToMiddle() {
-        this.player.x = 462;
-        this.player.y = 680;
-    }
-
 
     loadTitle() {
         this.title = true;
@@ -48,9 +43,9 @@ class SceneManager {
             ["Controls:",
                 "A: Left",
                 "D: Right",
-                "W: Ascend (in flying mode)",
-                "S: Descend (in flying mode)",
-                "SPACE: Jump, double tap for FLYING MODE",
+                "W: Ascend (in FLYING-MODE)",
+                "S: Descend (in FLYING-MODE)",
+                "SPACE: Jump, tap again to toggle FLYING-MODE",
                 "Left-Click: Shoot arrow in cursor direction",
                 "",
                 "GOAL:",
@@ -80,6 +75,11 @@ class SceneManager {
     * Transition Screen
     */
     loadTransition() {
+        //turn off title boxes
+        this.control = false;
+        this.credits = false;
+
+        //load transition 
         this.transition = true;
         this.game.clearLayer(this.game.targets);
         // var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
@@ -110,10 +110,11 @@ class SceneManager {
 
     update() {
         if (this.myTimer <= 0) {
+            this.myTimer = DEFAULT_GAME_TIMER;
+            this.player.freeze();
+            this.myScoreBoard.calculateBonus();
             ASSET_MANAGER.playAsset(SFX.GAME);
             this.transition = true;
-            this.myTimer = DEFAULT_GAME_TIMER;
-            this.myScoreBoard.calculateBonus();
             this.loadTransition();
         }
 
@@ -147,23 +148,27 @@ class SceneManager {
             }
         } else if (this.transition) { //results screen
             this.textColor = 0;
-            if (this.game.mouse) {
-                if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 2;
-                } else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 3;
+            if (this.mySign.isFinished()) { //to prevent clicking until sign is done
+                if (this.game.mouse) {
+                    if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                        this.textColor = 2;
+                    } else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                        this.textColor = 3;
+                    }
                 }
-            }
-            if (this.game.click) {
-                ASSET_MANAGER.playAsset(SFX.CLICK);
-                if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.game.attack = false;
-                    this.restartGame();
-                } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.title = true;
-                    this.transition = false;
+                if (this.game.click) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                        this.game.attack = false;
+                        this.restartGame();
+                    } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                        this.title = true;
+                        this.transition = false;
+                        this.resetGame();
+                        this.player.reset();
+                    }
+                    this.game.click = null;
                 }
-                this.game.click = null;
             }
             this.myScoreBoard.update();
         } else { //game is playing
@@ -283,7 +288,7 @@ class SceneManager {
      * Restarts game and keeps stats
      */
     restartGame() {
-        this.movePlayerToMiddle();
+        this.player.reset();
         this.resetGame();
         this.startGame();
     }

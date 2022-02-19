@@ -62,9 +62,6 @@ class CupidKirby {
 		this.width = 25 * this.scaling;
 		this.height = 22 * this.scaling;
 
-
-
-
 		this.velocity = { x: 0, y: 0 };
 		this.fallAcc = 1500;
 
@@ -77,9 +74,7 @@ class CupidKirby {
 
 		this.inAir = false;
 		this.flightMode = false;
-		this.shoot_spd = .05; //controls how fast kirby can shoot arrows in seconds
-
-
+		this.shoot_spd = .035; //controls how fast a frame is for the shooting animation
 
 		//animations
 		this.animations = []; //list of animations
@@ -206,7 +201,11 @@ class CupidKirby {
 				this.game.attack = false; //stop attackin
 
 				//spawn the arrow
-				this.game.addEntityToFront(new Arrow(this.game, this.x + this.width, this.y + this.height / 2, this.game.mouse));
+				let arrowX;
+				(this.facing == this.dir.left) ? arrowX = this.BB.left : arrowX = this.BB.right;
+				let arrowY = this.BB.top + (this.height / 2);
+
+				this.game.addEntityToFront(new Arrow(this.game, arrowX, arrowY, this.game.mouse));
 				ASSET_MANAGER.playAsset(SFX.SHOOT);
 			}
 
@@ -408,4 +407,23 @@ class CupidKirby {
 		this.air_shoot.drawFrame(this.game.clockTick, ctx, this.x + 600, this.y, this.scaling);
 
 	}
+
+	reset() {
+		this.action = this.states.idle;
+		this.facing = this.dir.right;
+		this.inAir = false;
+		this.flightMode = false;
+		this.freeze();
+		this.moveToMiddle();
+	}
+
+	freeze() {
+		this.velocity.x = 0;
+		this.velocity.y = 0;
+	}
+
+	moveToMiddle() {
+        this.x = 462;
+        this.y = 680;
+    }
 }

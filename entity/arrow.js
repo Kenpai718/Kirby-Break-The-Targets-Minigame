@@ -1,6 +1,6 @@
 class Arrow {
     constructor(game, x, y, target, towerTeam, heatSeeking) {
-        Object.assign(this, { game, x, y, target});
+        Object.assign(this, { game, x, y, target });
         this.radius = 15;
         this.smooth = false;
 
@@ -22,7 +22,7 @@ class Arrow {
 
         this.facing = 5;
         this.scale = 3;
-        
+
         this.elapsedTime = 0;
 
         this.myCombo = 0;
@@ -34,8 +34,8 @@ class Arrow {
 
 
         if (!this.cache[angle]) {
-           let radians = angle / 360 * 2 * Math.PI;
-           let offscreenCanvas = document.createElement('canvas');
+            let radians = angle / 360 * 2 * Math.PI;
+            let offscreenCanvas = document.createElement('canvas');
 
             offscreenCanvas.width = 32;
             offscreenCanvas.height = 32;
@@ -71,41 +71,53 @@ class Arrow {
         for (var i = 0; i < this.game.targets.length; i++) {
             var ent = this.game.targets[i];
             if (ent instanceof Target && collide(this, ent)) {
-                if(!ent.hit) {
+                if (!ent.hit) {
                     ent.hit = true; //so target cant be hit multiple times
                     ent.removeFromWorld = true;
                     ASSET_MANAGER.playAsset(SFX.PING);
                     this.game.addEntityToFront(new Score(this.game, ent, ent.getPoint()));
 
                     this.updateTargetScore(ent);
-                    
+
                 }
             }
         }
 
-        this.checkDespawn();
+        if (!this.removeFromWorld) this.checkDespawn();
     };
 
     updateTargetScore(theTarget) {
         this.scoreBoard.myNumHit++;
         this.scoreBoard.myPoints += (theTarget.getPoint())
         this.myCombo++;
-    
+
     }
 
     checkDespawn() {
-        if(this.x < -30 || this.x > this.game.surfaceWidth + 500 || this.y < -30 || this.y > this.game.surfaceHeight + 500) {
+        if (this.x < -30 || this.x > this.game.surfaceWidth + 500 || this.y < -30 || this.y > this.game.surfaceHeight + 500) {
             this.removeFromWorld = true;
             //add max combo to scoreboard
             this.scoreBoard.myMaxCombo = Math.max(this.myCombo, this.scoreBoard.myMaxCombo);
+
+            this.checkComboBonus();
         }
+    }
+
+    checkComboBonus() {
+        if (this.myCombo > 1) {
+            let player = this.game.camera.player;
+            let comboBonus = COMBO_BONUS * this.myCombo;
+            this.scoreBoard.myPoints += comboBonus;
+            this.game.addEntityToFront(new Score(this.game, player, comboBonus, true, this.myCombo));
+        }
+        
     }
 
     draw(ctx) {
         var xOffset = 16 * this.scale;
         var yOffset = 16 * this.scale;
         if (this.smooth) {
-            let angle = Math.atan2(this.velocity.y , this.velocity.x);
+            let angle = Math.atan2(this.velocity.y, this.velocity.x);
             if (angle < 0) angle += Math.PI * 2;
             let degrees = Math.floor(angle / Math.PI / 2 * 360);
 
@@ -130,5 +142,5 @@ class Arrow {
         }
     };
 
-    
+
 };

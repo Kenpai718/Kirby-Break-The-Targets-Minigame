@@ -35,6 +35,7 @@ ASSET_MANAGER.queueDownload(SFX.CLICK);
 ASSET_MANAGER.queueDownload(SFX.GO);
 ASSET_MANAGER.queueDownload(SFX.GAME);
 ASSET_MANAGER.queueDownload(SFX.RECORD);
+ASSET_MANAGER.queueDownload(SFX.WOW);
 
 
 ASSET_MANAGER.downloadAll(() => {
