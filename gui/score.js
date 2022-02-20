@@ -137,7 +137,7 @@ class ScoreBoard {
             "YOUR ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 500 + " = " + this.myAccuracyBonus,
             "",
             "[FINAL RESULTS]:",
-            "TOTAL-POINTS+BONUS  =" + this.myPoints + "pts",
+            "TOTAL POINTS+BONUS  =" + this.myPoints + "pts",
             "PREVIOUS HIGH-SCORE =" + this.myHighScore + "pts",
             "",
             finalMsg
