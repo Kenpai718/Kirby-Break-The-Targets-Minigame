@@ -99,7 +99,7 @@ class ScoreBoard {
 
     calculateBonus() {
         this.myComboBonus = this.myBonus * this.myMaxCombo;
-        this.myAccuracyBonus = Math.round(100 * this.myAccuracy / 100);
+        this.myAccuracyBonus = Math.round(500 * this.myAccuracy / 100);
         this.myWaveBonus = this.myBonus * this.myWave;
         this.myTargetBonus = 10 * this.myNumHit;
 
@@ -134,7 +134,7 @@ class ScoreBoard {
             "#TARGETS HIT:" + this.myNumHit + "*" + 10 + " = " + this.myTargetBonus,
             "#WAVES:" + this.myWave + "*" + this.myBonus + " = " + this.myWaveBonus,
             "MAX COMBO:" + this.myMaxCombo + "*" + this.myBonus + " = " + this.myComboBonus,
-            "YOUR ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 100 + " = " + this.myAccuracyBonus,
+            "YOUR ACCURACY:" + (this.myAccuracy / 100).toFixed(2) + "*" + 500 + " = " + this.myAccuracyBonus,
             "",
             "[FINAL RESULTS]:",
             "TOTAL-POINTS+BONUS  =" + this.myPoints + "pts",
